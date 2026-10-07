@@ -1,0 +1,27 @@
+{
+  "common": {
+    "appName": "PulsoFM",
+    "loading": "Cargando…",
+    "language": "Idioma"
+  },
+  "login": {
+    "title": "Inicia sesión",
+    "subtitle": "Usa tu usuario y contraseña del gimnasio.",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "submit": "Entrar",
+    "submitting": "Entrando…",
+    "errors": {
+      "INVALID_CREDENTIALS": "Usuario o contraseña incorrectos.",
+      "MEMBER_NOT_ACTIVE": "Tu cuenta no está activa. Contacta a recepción.",
+      "ERP_UNAVAILABLE": "No podemos verificar tu cuenta ahora. Inténtalo más tarde.",
+      "VALIDATION_ERROR": "Revisa los datos e inténtalo de nuevo.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
+    }
+  },
+  "home": {
+    "greeting": "Hola, {{name}}",
+    "comingSoon": "Pronto podrás buscar y pedir canciones desde aquí.",
+    "logout": "Salir"
+  }
+}
