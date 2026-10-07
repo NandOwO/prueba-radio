@@ -33,3 +33,32 @@ model Session {
   @@index([userId])
   @@map("sessions")
 }
+
+model Track {
+  id              String   @id @default(cuid())
+  provider        String
+  providerTrackId String
+  title           String
+  artist          String
+  durationMs      Int
+  coverUrl        String?
+  cachedAt        DateTime @default(now())
+
+  @@unique([provider, providerTrackId])
+  @@map("tracks")
+}
+
+model SearchCache {
+  query    String   @id
+  trackIds Json
+  cachedAt DateTime @default(now())
+
+  @@map("search_cache")
+}
+
+model QuotaUsage {
+  day   String @id
+  units Int    @default(0)
+
+  @@map("quota_usage")
+}
