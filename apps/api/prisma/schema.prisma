@@ -18,6 +18,7 @@ model User {
   createdAt    DateTime  @default(now())
   sessions     Session[]
   requests     Request[]
+  userBlocks   UserBlock[]
 
   @@map("users")
 }
@@ -81,4 +82,29 @@ model Request {
   @@index([status, position])
   @@index([userId, createdAt])
   @@map("requests")
+}
+
+model Blocklist {
+  id        String   @id @default(cuid())
+  type      String
+  value     String
+  reason    String?
+  createdBy String?
+  createdAt DateTime @default(now())
+
+  @@unique([type, value])
+  @@map("blocklist")
+}
+
+model UserBlock {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime?
+  reason    String?
+  createdBy String?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@map("user_blocks")
 }

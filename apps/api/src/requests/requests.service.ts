@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { ApiError } from '../common/api-error';
 import { loadConfig } from '../config';
 import { PrismaService } from '../prisma.service';
+import { BlocklistService } from './blocklist.service';
 import { evaluateRequestLimits } from './request-limits';
 
 const ACTIVE_STATUSES = ['queued', 'playing'];
@@ -18,7 +19,10 @@ export interface CreatedRequest {
 export class RequestsService {
   private readonly limits = loadConfig().requestLimit;
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly blocklist: BlocklistService,
+  ) {}
 
   /**
    * Crea una solicitud. Entra a la cola automáticamente.
@@ -26,7 +30,12 @@ export class RequestsService {
    * (FOR UPDATE), para que dos peticiones simultáneas no superen el límite.
    */
   async create(userId: string, trackId: string): Promise<CreatedRequest> {
-    return this.prisma.$transaction(async (tx) => {
+    const userBlock = await this.blocklist.activeUserBlock(userId);
+    if (userBlock) {
+      throw new ApiError(HttpStatus.FORBIDDEN, 'USER_REQUESTS_BLOCKED', userBlock);
+    }
+
+    const outcome = await this.prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM users WHERE id = ${userId} FOR UPDATE`;
 
       const now = new Date();
@@ -57,6 +66,15 @@ export class RequestsService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'TRACK_NOT_FOUND', 'La canción no existe');
       }
 
+      const blockedReason = await this.blocklist.matchTrack(track);
+      if (blockedReason) {
+        // Se guarda para auditoría, pero no cuenta para los límites ni entra a la cola.
+        await tx.request.create({
+          data: { userId, trackId, position: 0, status: 'blocked', reason: blockedReason },
+        });
+        return { blocked: true as const, reason: blockedReason };
+      }
+
       const last = await tx.request.aggregate({
         where: { status: { in: ACTIVE_STATUSES } },
         _max: { position: true },
@@ -66,13 +84,21 @@ export class RequestsService {
       });
 
       return {
-        id: request.id,
-        status: request.status,
-        position: request.position,
-        track: { id: track.id, title: track.title, artist: track.artist },
-        createdAt: request.createdAt,
+        blocked: false as const,
+        request: {
+          id: request.id,
+          status: request.status,
+          position: request.position,
+          track: { id: track.id, title: track.title, artist: track.artist },
+          createdAt: request.createdAt,
+        },
       };
     });
+
+    if (outcome.blocked) {
+      throw new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, 'TRACK_BLOCKED', outcome.reason);
+    }
+    return outcome.request;
   }
 
   /** Solicitudes del socio y sus límites restantes. */

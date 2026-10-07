@@ -40,6 +40,8 @@ describe('Solicitudes y límites', () => {
 
   beforeEach(async () => {
     await prisma.request.deleteMany();
+    await prisma.userBlock.deleteMany();
+    await prisma.blocklist.deleteMany();
     await prisma.searchCache.deleteMany();
     await prisma.track.deleteMany();
     await prisma.session.deleteMany();
@@ -149,6 +151,41 @@ describe('Solicitudes y límites', () => {
     expect(res.status).toBe(429);
     expect(res.body.code).toBe('REQUEST_QUOTA_EXCEEDED');
     expect(res.body.details.retryAfterSeconds).toBeLessThanOrEqual(60);
+  });
+
+  it('bloquea canciones de la blocklist: 422 y no cuentan para los límites', async () => {
+    await prisma.blocklist.create({
+      data: { type: 'artist', value: 'Queen', reason: 'Letra explícita' },
+    });
+    const res = await post();
+
+    expect(res.status).toBe(422);
+    expect(res.body).toMatchObject({ code: 'TRACK_BLOCKED', message: 'Letra explícita' });
+    const saved = await prisma.request.findFirst({ where: { userId } });
+    expect(saved?.status).toBe('blocked');
+    await prisma.blocklist.deleteMany();
+    // Una solicitud bloqueada no activa el cooldown: la siguiente canción sí se acepta.
+    const next = await post();
+    expect(next.status).toBe(201);
+  });
+
+  it('impide solicitar a un socio con bloqueo activo', async () => {
+    await prisma.userBlock.create({
+      data: { userId, reason: 'Uso indebido', expiresAt: new Date(Date.now() + 3600_000) },
+    });
+    const res = await post();
+
+    expect(res.status).toBe(403);
+    expect(res.body).toMatchObject({ code: 'USER_REQUESTS_BLOCKED', message: 'Uso indebido' });
+  });
+
+  it('permite solicitar de nuevo cuando el bloqueo ya venció', async () => {
+    await prisma.userBlock.create({
+      data: { userId, reason: 'Vencido', expiresAt: new Date(Date.now() - 1000) },
+    });
+    const res = await post();
+
+    expect(res.status).toBe(201);
   });
 
   it('responde 404 si la canción no existe', async () => {
