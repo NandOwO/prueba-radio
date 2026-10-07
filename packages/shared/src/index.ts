@@ -18,4 +18,4 @@ export const LOCALES = ['es', 'en'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'es';
 
-export * from './member-provider';
+export type { Member, MemberPage, MemberProvider } from './member-provider';
