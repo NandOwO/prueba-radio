@@ -1,0 +1,97 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma.service';
+
+export const PREVIOUS_LIMIT = 5;
+
+export interface QueueItem {
+  id: string;
+  status: string;
+  position: number;
+  track: { id: string; title: string; artist: string; durationMs: number; coverUrl: string | null };
+  requestedBy: string;
+}
+
+export interface QueueSnapshot {
+  previous: QueueItem[];
+  current: QueueItem | null;
+  upcoming: QueueItem[];
+}
+
+/** Primer nombre del socio. La cola es visible para todos los socios, así que no mostramos el apellido. */
+function firstName(name: string): string {
+  return name.trim().split(/\s+/)[0] ?? name;
+}
+
+@Injectable()
+export class QueueService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async snapshot(): Promise<QueueSnapshot> {
+    const [previousRows, currentRow, upcomingRows] = await Promise.all([
+      this.prisma.request.findMany({
+        where: { status: { in: ['played', 'skipped'] } },
+        orderBy: { playedAt: 'desc' },
+        take: PREVIOUS_LIMIT,
+        include: { track: true, user: true },
+      }),
+      this.prisma.request.findFirst({
+        where: { status: 'playing' },
+        include: { track: true, user: true },
+      }),
+      this.prisma.request.findMany({
+        where: { status: 'queued' },
+        orderBy: { position: 'asc' },
+        include: { track: true, user: true },
+      }),
+    ]);
+
+    const toItem = (r: (typeof upcomingRows)[number]): QueueItem => ({
+      id: r.id,
+      status: r.status,
+      position: r.position,
+      track: {
+        id: r.track.id,
+        title: r.track.title,
+        artist: r.track.artist,
+        durationMs: r.track.durationMs,
+        coverUrl: r.track.coverUrl,
+      },
+      requestedBy: firstName(r.user.name),
+    });
+
+    return {
+      // Del más reciente al más antiguo, para mostrar "lo que sonó hace poco" arriba.
+      previous: previousRows.map(toItem),
+      current: currentRow ? toItem(currentRow) : null,
+      upcoming: upcomingRows.map(toItem),
+    };
+  }
+
+  /**
+   * Termina la canción actual (played o skipped) y pone la siguiente en reproducción.
+   * Lo usará el reproductor (Fase 4) y el staff para saltar (Fase 6).
+   */
+  async advance(options: { skipped?: boolean; decidedBy?: string } = {}): Promise<QueueSnapshot> {
+    await this.prisma.$transaction(async (tx) => {
+      const current = await tx.request.findFirst({ where: { status: 'playing' } });
+      if (current) {
+        await tx.request.update({
+          where: { id: current.id },
+          data: {
+            status: options.skipped ? 'skipped' : 'played',
+            playedAt: new Date(),
+            decidedBy: options.decidedBy ?? null,
+          },
+        });
+      }
+      const next = await tx.request.findFirst({
+        where: { status: 'queued' },
+        orderBy: { position: 'asc' },
+      });
+      if (next) {
+        await tx.request.update({ where: { id: next.id }, data: { status: 'playing' } });
+      }
+    });
+    return this.snapshot();
+  }
+}

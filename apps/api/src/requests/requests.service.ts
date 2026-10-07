@@ -124,6 +124,14 @@ export class RequestsService {
       recent.map((r) => r.createdAt),
       this.limits,
     );
+    // Puesto actual: cuántas canciones en cola van antes que esta, más uno.
+    const queued = await this.prisma.request.findMany({
+      where: { status: 'queued' },
+      orderBy: { position: 'asc' },
+      select: { id: true },
+    });
+    const queuePlace = new Map(queued.map((q, index) => [q.id, index + 1]));
+
     return {
       items: items.map((r) => ({
         id: r.id,
@@ -131,6 +139,7 @@ export class RequestsService {
         reason: r.reason,
         createdAt: r.createdAt,
         track: r.track,
+        queuePosition: queuePlace.get(r.id) ?? null,
       })),
       limits: {
         remaining: verdict.remaining,
