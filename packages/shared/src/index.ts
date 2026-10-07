@@ -19,3 +19,4 @@ export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'es';
 
 export type { Member, MemberPage, MemberProvider } from './member-provider';
+export type { MusicProvider, Track } from './music-provider';
