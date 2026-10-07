@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { QueuePage } from './pages/QueuePage';
 import { RequestsPage } from './pages/RequestsPage';
 import { SearchPage } from './pages/SearchPage';
 import { useTranslation } from 'react-i18next';
@@ -43,6 +44,14 @@ export function App() {
             element={
               <Protected>
                 <RequestsPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/queue"
+            element={
+              <Protected>
+                <QueuePage />
               </Protected>
             }
           />

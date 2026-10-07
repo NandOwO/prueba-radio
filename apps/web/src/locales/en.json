@@ -24,7 +24,8 @@
     "comingSoon": "Soon you'll be able to search and request songs from here.",
     "logout": "Sign out",
     "searchLink": "Search songs",
-    "requestsLink": "My requests"
+    "requestsLink": "My requests",
+    "queueLink": "View the queue"
   },
   "search": {
     "back": "Home",
@@ -70,5 +71,16 @@
       "generic": "We couldn't load your requests.",
       "UNAUTHENTICATED": "Sign in to see your requests."
     }
+  },
+  "queue": {
+    "title": "Radio queue",
+    "live": "Live",
+    "reconnecting": "Reconnecting…",
+    "nowPlaying": "Playing now",
+    "nothingPlaying": "Nothing is playing.",
+    "upcoming": "Up next",
+    "emptyUpcoming": "The queue is empty. Request the first song!",
+    "previous": "Previously",
+    "emptyPrevious": "Nothing has played yet."
   }
 }

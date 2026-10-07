@@ -24,7 +24,8 @@
     "comingSoon": "Pronto podrás buscar y pedir canciones desde aquí.",
     "logout": "Salir",
     "searchLink": "Buscar canciones",
-    "requestsLink": "Mis solicitudes"
+    "requestsLink": "Mis solicitudes",
+    "queueLink": "Ver la cola"
   },
   "search": {
     "back": "Inicio",
@@ -70,5 +71,16 @@
       "generic": "No pudimos cargar tus solicitudes.",
       "UNAUTHENTICATED": "Inicia sesión para ver tus solicitudes."
     }
+  },
+  "queue": {
+    "title": "Cola de la radio",
+    "live": "En vivo",
+    "reconnecting": "Reconectando…",
+    "nowPlaying": "Sonando ahora",
+    "nothingPlaying": "No hay nada sonando.",
+    "upcoming": "Siguientes",
+    "emptyUpcoming": "La cola está vacía. ¡Pide la primera canción!",
+    "previous": "Anteriores",
+    "emptyPrevious": "Todavía no ha sonado nada."
   }
 }

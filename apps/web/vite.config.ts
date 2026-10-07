@@ -20,6 +20,7 @@ export default defineConfig({
       '/auth': apiTarget,
       '/staff': apiTarget,
       '/health': apiTarget,
+      '/socket.io': { target: apiTarget, ws: true },
     },
   },
   test: {

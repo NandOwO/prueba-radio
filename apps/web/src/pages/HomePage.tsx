@@ -28,6 +28,12 @@ export function HomePage() {
           {t('home.searchLink')}
         </Link>
         <Link
+          to="/queue"
+          className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 text-base font-semibold"
+        >
+          {t('home.queueLink')}
+        </Link>
+        <Link
           to="/requests"
           className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 text-base font-semibold"
         >
