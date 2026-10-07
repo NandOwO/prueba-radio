@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
 export function HomePage() {
@@ -19,7 +20,12 @@ export function HomePage() {
         </button>
       </header>
       <p className="text-xl font-semibold">{t('home.greeting', { name: state.user.name })}</p>
-      <p className="text-base text-[var(--color-muted)]">{t('home.comingSoon')}</p>
+      <Link
+        to="/search"
+        className="flex min-h-12 items-center justify-center rounded-xl bg-[var(--color-accent)] px-4 text-base font-semibold text-[var(--color-accent-text)]"
+      >
+        {t('home.searchLink')}
+      </Link>
     </main>
   );
 }

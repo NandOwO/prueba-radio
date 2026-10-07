@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { SearchPage } from './pages/SearchPage';
 import { useTranslation } from 'react-i18next';
 
 function Protected({ children }: { children: React.ReactNode }) {
@@ -25,6 +26,14 @@ export function App() {
             element={
               <Protected>
                 <HomePage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              <Protected>
+                <SearchPage />
               </Protected>
             }
           />

@@ -22,6 +22,22 @@
   "home": {
     "greeting": "Hi, {{name}}",
     "comingSoon": "Soon you'll be able to search and request songs from here.",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "searchLink": "Search songs"
+  },
+  "search": {
+    "back": "Home",
+    "title": "Search",
+    "label": "Song or artist",
+    "placeholder": "e.g. Queen, Dua Lipa…",
+    "tooShort": "Type at least {{min}} characters.",
+    "loading": "Searching…",
+    "empty": "We couldn't find available songs for that search.",
+    "errors": {
+      "SEARCH_QUOTA_EXHAUSTED": "Today's searches are used up. Try again tomorrow.",
+      "SEARCH_UNAVAILABLE": "Search isn't available right now. Please try again later.",
+      "VALIDATION_ERROR": "Type at least 2 characters.",
+      "generic": "Something went wrong while searching."
+    }
   }
 }

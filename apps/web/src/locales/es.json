@@ -22,6 +22,22 @@
   "home": {
     "greeting": "Hola, {{name}}",
     "comingSoon": "Pronto podrás buscar y pedir canciones desde aquí.",
-    "logout": "Salir"
+    "logout": "Salir",
+    "searchLink": "Buscar canciones"
+  },
+  "search": {
+    "back": "Inicio",
+    "title": "Buscar",
+    "label": "Canción o artista",
+    "placeholder": "Ej. Queen, Dua Lipa…",
+    "tooShort": "Escribe al menos {{min}} letras.",
+    "loading": "Buscando…",
+    "empty": "No encontramos canciones disponibles para esa búsqueda.",
+    "errors": {
+      "SEARCH_QUOTA_EXHAUSTED": "Hoy se agotaron las búsquedas. Inténtalo mañana.",
+      "SEARCH_UNAVAILABLE": "La búsqueda no está disponible ahora. Inténtalo más tarde.",
+      "VALIDATION_ERROR": "Escribe al menos 2 letras.",
+      "generic": "Algo salió mal al buscar."
+    }
   }
 }
