@@ -53,6 +53,7 @@ describe('Búsqueda de canciones', () => {
   });
 
   beforeEach(async () => {
+    await prisma.request.deleteMany();
     await prisma.searchCache.deleteMany();
     await prisma.track.deleteMany();
     await prisma.quotaUsage.deleteMany();
