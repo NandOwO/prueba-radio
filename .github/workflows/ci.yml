@@ -13,6 +13,23 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://pulsofm:pulsofm@localhost:5432/pulsofm_test
+      JWT_SECRET: ci-only-secret-value-1234567890
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pulsofm
+          POSTGRES_PASSWORD: pulsofm
+          POSTGRES_DB: pulsofm_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U pulsofm"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
 
@@ -25,6 +42,9 @@ jobs:
 
       - name: Instalar dependencias
         run: pnpm install --frozen-lockfile
+
+      - name: Generar cliente de Prisma
+        run: pnpm --filter @pulsofm/api exec prisma generate
 
       - name: Formato
         run: pnpm format:check
