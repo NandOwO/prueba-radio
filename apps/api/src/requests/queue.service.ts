@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter } from 'node:events';
 import { PrismaService } from '../prisma.service';
 
 export const PREVIOUS_LIMIT = 5;
@@ -24,7 +25,14 @@ function firstName(name: string): string {
 
 @Injectable()
 export class QueueService {
+  /** Se emite "changed" cada vez que cambia la cola. Lo escucha el canal de tiempo real. */
+  readonly changes = new EventEmitter();
+
   constructor(private readonly prisma: PrismaService) {}
+
+  notifyChanged(): void {
+    this.changes.emit('changed');
+  }
 
   async snapshot(): Promise<QueueSnapshot> {
     const [previousRows, currentRow, upcomingRows] = await Promise.all([
@@ -92,6 +100,7 @@ export class QueueService {
         await tx.request.update({ where: { id: next.id }, data: { status: 'playing' } });
       }
     });
+    this.notifyChanged();
     return this.snapshot();
   }
 }

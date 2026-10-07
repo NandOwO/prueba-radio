@@ -3,6 +3,7 @@ import { ApiError } from '../common/api-error';
 import { loadConfig } from '../config';
 import { PrismaService } from '../prisma.service';
 import { BlocklistService } from './blocklist.service';
+import { QueueService } from './queue.service';
 import { evaluateRequestLimits } from './request-limits';
 
 const ACTIVE_STATUSES = ['queued', 'playing'];
@@ -22,6 +23,7 @@ export class RequestsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly blocklist: BlocklistService,
+    private readonly queue: QueueService,
   ) {}
 
   /**
@@ -98,6 +100,7 @@ export class RequestsService {
     if (outcome.blocked) {
       throw new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, 'TRACK_BLOCKED', outcome.reason);
     }
+    this.queue.notifyChanged();
     return outcome.request;
   }
 
