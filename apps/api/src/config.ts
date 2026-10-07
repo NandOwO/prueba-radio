@@ -1,0 +1,21 @@
+export interface AppConfig {
+  jwtSecret: string;
+  accessTokenTtlSeconds: number;
+  sessionTtlHours: number;
+  cookieSecure: boolean;
+}
+
+/** Lee la configuración del entorno. Falla al arrancar si falta el secreto JWT en producción. */
+export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
+  const isProduction = env.NODE_ENV === 'production';
+  const jwtSecret = env.JWT_SECRET ?? (isProduction ? '' : 'dev-only-secret-change-me');
+  if (jwtSecret.length < 16) {
+    throw new Error('JWT_SECRET debe tener al menos 16 caracteres');
+  }
+  return {
+    jwtSecret,
+    accessTokenTtlSeconds: Number(env.ACCESS_TOKEN_TTL_SECONDS ?? 900),
+    sessionTtlHours: Number(env.SESSION_TTL_HOURS ?? 12),
+    cookieSecure: isProduction,
+  };
+}

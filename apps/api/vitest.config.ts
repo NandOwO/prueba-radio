@@ -8,6 +8,12 @@ export default defineConfig({
   ],
   test: {
     include: ['test/**/*.spec.ts', 'src/**/*.spec.ts'],
+    env: {
+      NODE_ENV: 'test',
+      JWT_SECRET: 'test-secret-with-16-chars-or-more',
+    },
+    // Las pruebas e2e comparten la base de datos: se ejecutan en serie.
+    fileParallelism: false,
     passWithNoTests: true,
   },
 });
