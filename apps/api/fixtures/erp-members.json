@@ -1,0 +1,29 @@
+{
+  "_aviso": "Datos ficticios para desarrollo. El FakeErpAdapter nunca se usa en producción.",
+  "members": [
+    {
+      "id": "M-10482",
+      "username": "maria.lopez",
+      "password": "gym-1234",
+      "fullName": "María López",
+      "status": "active",
+      "updatedAt": "2026-10-06T18:22:10Z"
+    },
+    {
+      "id": "M-10517",
+      "username": "juan.perez",
+      "password": "gym-1234",
+      "fullName": "Juan Pérez",
+      "status": "suspended",
+      "updatedAt": "2026-10-07T09:00:00Z"
+    },
+    {
+      "id": "M-10601",
+      "username": "ana.ruiz",
+      "password": "gym-1234",
+      "fullName": "Ana Ruiz",
+      "status": "active",
+      "updatedAt": "2026-10-05T12:00:00Z"
+    }
+  ]
+}
