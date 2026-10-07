@@ -20,12 +20,20 @@ export function HomePage() {
         </button>
       </header>
       <p className="text-xl font-semibold">{t('home.greeting', { name: state.user.name })}</p>
-      <Link
-        to="/search"
-        className="flex min-h-12 items-center justify-center rounded-xl bg-[var(--color-accent)] px-4 text-base font-semibold text-[var(--color-accent-text)]"
-      >
-        {t('home.searchLink')}
-      </Link>
+      <nav className="flex flex-col gap-3">
+        <Link
+          to="/search"
+          className="flex min-h-12 items-center justify-center rounded-xl bg-[var(--color-accent)] px-4 text-base font-semibold text-[var(--color-accent-text)]"
+        >
+          {t('home.searchLink')}
+        </Link>
+        <Link
+          to="/requests"
+          className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 text-base font-semibold"
+        >
+          {t('home.requestsLink')}
+        </Link>
+      </nav>
     </main>
   );
 }

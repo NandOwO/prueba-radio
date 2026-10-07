@@ -23,7 +23,8 @@
     "greeting": "Hi, {{name}}",
     "comingSoon": "Soon you'll be able to search and request songs from here.",
     "logout": "Sign out",
-    "searchLink": "Search songs"
+    "searchLink": "Search songs",
+    "requestsLink": "My requests"
   },
   "search": {
     "back": "Home",
@@ -38,6 +39,36 @@
       "SEARCH_UNAVAILABLE": "Search isn't available right now. Please try again later.",
       "VALIDATION_ERROR": "Type at least 2 characters.",
       "generic": "Something went wrong while searching."
+    },
+    "request": "Request",
+    "requesting": "Requesting…",
+    "requestErrors": {
+      "REQUEST_COOLDOWN": "Wait {{minutes}} min before requesting another song.",
+      "REQUEST_QUOTA_EXCEEDED": "You've reached the request limit. You can request again in {{minutes}} min.",
+      "TRACK_BLOCKED": "This song isn't allowed on the radio.",
+      "USER_REQUESTS_BLOCKED": "Song requests are blocked on your account. Please contact the front desk.",
+      "TRACK_NOT_FOUND": "That song is no longer available.",
+      "generic": "We couldn't register your request. Please try again."
+    }
+  },
+  "requests": {
+    "title": "My requests",
+    "empty": "You haven't requested any songs yet.",
+    "status": {
+      "queued": "In queue · place {{position}}",
+      "playing": "Playing now",
+      "played": "Played",
+      "skipped": "Skipped",
+      "removed": "Removed",
+      "blocked": "Blocked"
+    },
+    "limits": {
+      "remaining": "You have {{count}} of {{max}} requests every {{minutes}} min",
+      "nextIn": "You can request another in {{minutes}} min"
+    },
+    "errors": {
+      "generic": "We couldn't load your requests.",
+      "UNAUTHENTICATED": "Sign in to see your requests."
     }
   }
 }

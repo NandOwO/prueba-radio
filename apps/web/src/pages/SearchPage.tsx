@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ApiRequestError } from '../api/client';
+import { createRequest } from '../api/requests';
 import { searchTracks, type TrackWithId } from '../api/tracks';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 
@@ -21,6 +22,30 @@ export function SearchPage() {
   const [results, setResults] = useState<TrackWithId[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [requesting, setRequesting] = useState<string | null>(null);
+  const [requested, setRequested] = useState<Record<string, number>>({});
+  const [requestError, setRequestError] = useState<string | null>(null);
+
+  async function onRequest(track: TrackWithId) {
+    setRequesting(track.id);
+    setRequestError(null);
+    try {
+      const created = await createRequest(track.id);
+      setRequested((prev) => ({ ...prev, [track.id]: created.position }));
+    } catch (err) {
+      const code = err instanceof ApiRequestError ? err.code : 'generic';
+      const seconds =
+        err instanceof ApiRequestError ? Number(err.details?.retryAfterSeconds ?? 0) : 0;
+      setRequestError(
+        t(`search.requestErrors.${code}`, {
+          defaultValue: t('search.requestErrors.generic'),
+          minutes: Math.max(1, Math.ceil(seconds / 60)),
+        }),
+      );
+    } finally {
+      setRequesting(null);
+    }
+  }
 
   useEffect(() => {
     if (debounced.length < MIN_QUERY) {
@@ -78,6 +103,11 @@ export function SearchPage() {
         </p>
       )}
       {loading && <p className="text-sm text-[var(--color-muted)]">{t('search.loading')}</p>}
+      {requestError && (
+        <p role="alert" className="text-sm text-[var(--color-danger)]">
+          {requestError}
+        </p>
+      )}
       {errorKey && (
         <p role="alert" className="text-sm text-[var(--color-danger)]">
           {t(errorKey, { defaultValue: t('search.errors.generic') })}
@@ -112,6 +142,20 @@ export function SearchPage() {
             <span className="shrink-0 text-sm tabular-nums text-[var(--color-muted)]">
               {formatDuration(track.durationMs)}
             </span>
+            {requested[track.id] ? (
+              <span className="shrink-0 rounded-lg bg-[var(--color-accent)] px-3 py-2 text-sm font-semibold text-[var(--color-accent-text)]">
+                #{requested[track.id]}
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void onRequest(track)}
+                disabled={requesting !== null}
+                className="min-h-11 shrink-0 rounded-lg bg-[var(--color-accent)] px-3 text-sm font-semibold text-[var(--color-accent-text)] disabled:opacity-50"
+              >
+                {requesting === track.id ? t('search.requesting') : t('search.request')}
+              </button>
+            )}
           </li>
         ))}
       </ul>

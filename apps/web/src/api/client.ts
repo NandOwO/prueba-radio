@@ -8,6 +8,7 @@ export class ApiRequestError extends Error {
   constructor(
     readonly status: number,
     readonly code: string,
+    readonly details?: Record<string, unknown>,
   ) {
     super(code);
   }
@@ -42,8 +43,11 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}, retry = 
   }
 
   if (!res.ok) {
-    const body = (await res.json().catch(() => ({}))) as { code?: string };
-    throw new ApiRequestError(res.status, body.code ?? 'generic');
+    const body = (await res.json().catch(() => ({}))) as {
+      code?: string;
+      details?: Record<string, unknown>;
+    };
+    throw new ApiRequestError(res.status, body.code ?? 'generic', body.details);
   }
   return (res.status === 204 ? undefined : await res.json()) as T;
 }

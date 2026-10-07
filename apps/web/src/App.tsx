@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { RequestsPage } from './pages/RequestsPage';
 import { SearchPage } from './pages/SearchPage';
 import { useTranslation } from 'react-i18next';
 
@@ -34,6 +35,14 @@ export function App() {
             element={
               <Protected>
                 <SearchPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/requests"
+            element={
+              <Protected>
+                <RequestsPage />
               </Protected>
             }
           />

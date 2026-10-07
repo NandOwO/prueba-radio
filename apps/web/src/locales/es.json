@@ -23,7 +23,8 @@
     "greeting": "Hola, {{name}}",
     "comingSoon": "Pronto podrás buscar y pedir canciones desde aquí.",
     "logout": "Salir",
-    "searchLink": "Buscar canciones"
+    "searchLink": "Buscar canciones",
+    "requestsLink": "Mis solicitudes"
   },
   "search": {
     "back": "Inicio",
@@ -38,6 +39,36 @@
       "SEARCH_UNAVAILABLE": "La búsqueda no está disponible ahora. Inténtalo más tarde.",
       "VALIDATION_ERROR": "Escribe al menos 2 letras.",
       "generic": "Algo salió mal al buscar."
+    },
+    "request": "Pedir",
+    "requesting": "Pidiendo…",
+    "requestErrors": {
+      "REQUEST_COOLDOWN": "Espera {{minutes}} min para pedir otra canción.",
+      "REQUEST_QUOTA_EXCEEDED": "Llegaste al límite de solicitudes. Podrás pedir de nuevo en {{minutes}} min.",
+      "TRACK_BLOCKED": "Esta canción no está permitida en la radio.",
+      "USER_REQUESTS_BLOCKED": "Tu acceso a solicitar canciones está bloqueado. Contacta a recepción.",
+      "TRACK_NOT_FOUND": "Esa canción ya no está disponible.",
+      "generic": "No pudimos registrar tu solicitud. Inténtalo de nuevo."
+    }
+  },
+  "requests": {
+    "title": "Mis solicitudes",
+    "empty": "Aún no has pedido canciones.",
+    "status": {
+      "queued": "En cola · puesto {{position}}",
+      "playing": "Sonando ahora",
+      "played": "Reproducida",
+      "skipped": "Saltada",
+      "removed": "Eliminada",
+      "blocked": "Bloqueada"
+    },
+    "limits": {
+      "remaining": "Te quedan {{count}} de {{max}} solicitudes cada {{minutes}} min",
+      "nextIn": "Podrás pedir otra en {{minutes}} min"
+    },
+    "errors": {
+      "generic": "No pudimos cargar tus solicitudes.",
+      "UNAUTHENTICATED": "Inicia sesión para ver tus solicitudes."
     }
   }
 }
