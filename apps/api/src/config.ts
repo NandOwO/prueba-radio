@@ -6,6 +6,7 @@ export interface AppConfig {
   youtubeApiKey: string | undefined;
   youtubeDailyQuota: number;
   searchCacheHours: number;
+  requestLimit: { windowMinutes: number; maxInWindow: number; cooldownMinutes: number };
 }
 
 /** Lee la configuración del entorno. Falla al arrancar si falta el secreto JWT en producción. */
@@ -24,5 +25,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     // Límite diario propio por debajo de los 10 000 de YouTube, como margen de seguridad.
     youtubeDailyQuota: Number(env.YOUTUBE_DAILY_QUOTA ?? 9000),
     searchCacheHours: Number(env.SEARCH_CACHE_HOURS ?? 24),
+    requestLimit: {
+      windowMinutes: Number(env.REQUEST_WINDOW_MINUTES ?? 30),
+      maxInWindow: Number(env.REQUEST_MAX_IN_WINDOW ?? 5),
+      cooldownMinutes: Number(env.REQUEST_COOLDOWN_MINUTES ?? 6),
+    },
   };
 }
