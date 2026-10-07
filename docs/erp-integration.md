@@ -6,12 +6,12 @@
 
 ## 1. Qué necesita PulsoFM del ERP
 
-| Necesidad | Para qué |
-|---|---|
-| Validar usuario y contraseña | Login de socios con sus mismas credenciales |
+| Necesidad                     | Para qué                                    |
+| ----------------------------- | ------------------------------------------- |
+| Validar usuario y contraseña  | Login de socios con sus mismas credenciales |
 | Consultar el estado del socio | Bloquear acceso si está suspendido o moroso |
-| Listar socios modificados | Sincronización de respaldo (pull) |
-| Recibir cambios de socios | Sincronización en tiempo real (push) |
+| Listar socios modificados     | Sincronización de respaldo (pull)           |
+| Recibir cambios de socios     | Sincronización en tiempo real (push)        |
 
 El ERP es la **fuente de verdad** de identidad y estado. PulsoFM guarda solo lo necesario (`external_id`, nombre, rol local y estado copiado).
 
@@ -160,10 +160,9 @@ X-Erp-Signature: sha256=3f2a…c9
 import crypto from 'node:crypto';
 
 export function signErpPayload(secret, timestamp, rawBody) {
-  return 'sha256=' + crypto
-    .createHmac('sha256', secret)
-    .update(`${timestamp}.${rawBody}`)
-    .digest('hex');
+  return (
+    'sha256=' + crypto.createHmac('sha256', secret).update(`${timestamp}.${rawBody}`).digest('hex')
+  );
 }
 ```
 
@@ -186,10 +185,12 @@ export class ErpSignatureGuard implements CanActivate {
       throw new UnauthorizedException({ code: 'STALE_SIGNATURE' });
     }
 
-    const expected = 'sha256=' + crypto
-      .createHmac('sha256', process.env.ERP_WEBHOOK_SECRET!)
-      .update(`${timestamp}.${req.rawBody}`)
-      .digest('hex');
+    const expected =
+      'sha256=' +
+      crypto
+        .createHmac('sha256', process.env.ERP_WEBHOOK_SECRET!)
+        .update(`${timestamp}.${req.rawBody}`)
+        .digest('hex');
 
     const ok =
       received.length === expected.length &&
@@ -237,14 +238,14 @@ import type { Member, MemberProvider } from '@pulsofm/shared';
 
 @Injectable()
 export class GymErpAdapter implements MemberProvider {
-  private readonly base = process.env.ERP_BASE_URL!;   // https://erp.gimnasio.local/api/v1
+  private readonly base = process.env.ERP_BASE_URL!; // https://erp.gimnasio.local/api/v1
   private readonly key = process.env.ERP_API_KEY!;
 
   private async call<T>(path: string, init: RequestInit = {}): Promise<T> {
     const res = await fetch(`${this.base}${path}`, {
       ...init,
       headers: { 'Content-Type': 'application/json', 'X-Api-Key': this.key, ...init.headers },
-      signal: AbortSignal.timeout(5000),   // si el ERP tarda, falla rápido
+      signal: AbortSignal.timeout(5000), // si el ERP tarda, falla rápido
     });
     if (!res.ok) throw new Error(`ERP_UNAVAILABLE: ${res.status}`);
     return res.json() as Promise<T>;
@@ -285,12 +286,12 @@ export class GymErpAdapter implements MemberProvider {
 
 **Mapeo de campos** (se ajusta al ERP real):
 
-| Campo ERP | Campo PulsoFM |
-|---|---|
-| `id` | `users.external_id` |
-| `fullName` | `users.name` |
-| `username` | `users.username` |
-| `status` | `users.status` |
+| Campo ERP   | Campo PulsoFM                                        |
+| ----------- | ---------------------------------------------------- |
+| `id`        | `users.external_id`                                  |
+| `fullName`  | `users.name`                                         |
+| `username`  | `users.username`                                     |
+| `status`    | `users.status`                                       |
 | `updatedAt` | `users.last_synced_at` (y control de eventos viejos) |
 
 ---
@@ -301,7 +302,7 @@ Un job cada 15 minutos:
 
 1. Lee `last_sync_at` desde `settings`.
 2. Llama `listUpdatedSince(last_sync_at)` y recorre todas las páginas.
-3. Hace *upsert* de cada socio y aplica la regla de estado.
+3. Hace _upsert_ de cada socio y aplica la regla de estado.
 4. Guarda el nuevo `last_sync_at` solo si todas las páginas se procesaron.
 
 Así, si el push se pierde, el pull lo corrige en un máximo de 15 minutos.
@@ -310,16 +311,16 @@ Así, si el push se pierde, el pull lo corrige en un máximo de 15 minutos.
 
 ## 7. Pruebas de integración
 
-| Caso | Resultado esperado |
-|---|---|
-| Login con credenciales correctas y socio activo | Sesión creada |
-| Login con contraseña incorrecta | `401 INVALID_CREDENTIALS` (mismo mensaje que usuario inexistente) |
-| Login con socio suspendido | `403 MEMBER_NOT_ACTIVE` |
-| ERP caído en el login | `503 ERP_UNAVAILABLE` |
-| Refresh de un socio que pasa a suspendido | Sesión cerrada en el siguiente refresh |
-| Webhook con firma inválida | `401 INVALID_SIGNATURE` |
-| Webhook con timestamp de hace 10 min | `401 STALE_SIGNATURE` |
-| Evento con `updatedAt` más viejo que el local | Ignorado, sin cambios |
+| Caso                                            | Resultado esperado                                                |
+| ----------------------------------------------- | ----------------------------------------------------------------- |
+| Login con credenciales correctas y socio activo | Sesión creada                                                     |
+| Login con contraseña incorrecta                 | `401 INVALID_CREDENTIALS` (mismo mensaje que usuario inexistente) |
+| Login con socio suspendido                      | `403 MEMBER_NOT_ACTIVE`                                           |
+| ERP caído en el login                           | `503 ERP_UNAVAILABLE`                                             |
+| Refresh de un socio que pasa a suspendido       | Sesión cerrada en el siguiente refresh                            |
+| Webhook con firma inválida                      | `401 INVALID_SIGNATURE`                                           |
+| Webhook con timestamp de hace 10 min            | `401 STALE_SIGNATURE`                                             |
+| Evento con `updatedAt` más viejo que el local   | Ignorado, sin cambios                                             |
 
 En desarrollo, un `GymErpAdapter` de prueba responde con socios ficticios desde un archivo JSON, para no depender del ERP real.
 

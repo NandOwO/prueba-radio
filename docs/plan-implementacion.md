@@ -10,18 +10,18 @@ Aplicación web **mobile-first** (PWA) donde los socios del gimnasio inician ses
 
 ### Decisiones clave
 
-| Tema | Decisión | Estado |
-|---|---|---|
-| Nombre | **PulsoFM** | (confirmada) |
-| Login | Mismas credenciales del ERP; el ERP es la fuente de verdad del estado del socio | (confirmada) |
-| Música | **YouTube** (YouTube Data API v3 para búsqueda, YouTube IFrame Player API para reproducir). Gratis, sin Premium | (confirmada) |
-| Moderación | Solicitudes automáticas. Staff: ver, saltar y eliminar de la cola | (confirmada) |
-| Límites | 5 solicitudes cada 30 min en total y 1 cada 6 min por socio | (confirmada) |
-| Pantalla | PC con navegador en pantalla completa, salida de audio a los altavoces | (confirmada) |
-| Idiomas | Español e inglés desde el inicio | (confirmada) |
-| Fuente de verdad de la cola | Nuestro backend. YouTube solo **ejecuta** lo que el backend indica | (propuesta) |
-| Integración con ERP | Capa de adaptadores + ejemplo documentado en `docs/erp-integration.md` | (propuesta) |
-| Arquitectura | Monolito modular, no microservicios | (propuesta) |
+| Tema                        | Decisión                                                                                                        | Estado       |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------ |
+| Nombre                      | **PulsoFM**                                                                                                     | (confirmada) |
+| Login                       | Mismas credenciales del ERP; el ERP es la fuente de verdad del estado del socio                                 | (confirmada) |
+| Música                      | **YouTube** (YouTube Data API v3 para búsqueda, YouTube IFrame Player API para reproducir). Gratis, sin Premium | (confirmada) |
+| Moderación                  | Solicitudes automáticas. Staff: ver, saltar y eliminar de la cola                                               | (confirmada) |
+| Límites                     | 5 solicitudes cada 30 min en total y 1 cada 6 min por socio                                                     | (confirmada) |
+| Pantalla                    | PC con navegador en pantalla completa, salida de audio a los altavoces                                          | (confirmada) |
+| Idiomas                     | Español e inglés desde el inicio                                                                                | (confirmada) |
+| Fuente de verdad de la cola | Nuestro backend. YouTube solo **ejecuta** lo que el backend indica                                              | (propuesta)  |
+| Integración con ERP         | Capa de adaptadores + ejemplo documentado en `docs/erp-integration.md`                                          | (propuesta)  |
+| Arquitectura                | Monolito modular, no microservicios                                                                             | (propuesta)  |
 
 ---
 
@@ -79,10 +79,10 @@ flowchart LR
 
 Se usa **YouTube** porque es gratuito y no requiere cuenta Premium.
 
-| Pieza | Uso | Límite a tener en cuenta |
-|---|---|---|
-| **YouTube Data API v3** | Buscar canciones y obtener título, artista (canal), portada y duración | Cuota diaria de **10 000 unidades**. Una búsqueda cuesta **100 unidades**, es decir, unas 100 búsquedas al día con la cuota por defecto. Hay que cachear resultados y limitar la búsqueda con *debounce* |
-| **YouTube IFrame Player API** | Reproducir en la pantalla del gimnasio, con control de play, pausa, siguiente y volumen | Puede mostrar anuncios; el video debe permitir incrustarse |
+| Pieza                         | Uso                                                                                     | Límite a tener en cuenta                                                                                                                                                                                 |
+| ----------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **YouTube Data API v3**       | Buscar canciones y obtener título, artista (canal), portada y duración                  | Cuota diaria de **10 000 unidades**. Una búsqueda cuesta **100 unidades**, es decir, unas 100 búsquedas al día con la cuota por defecto. Hay que cachear resultados y limitar la búsqueda con _debounce_ |
+| **YouTube IFrame Player API** | Reproducir en la pantalla del gimnasio, con control de play, pausa, siguiente y volumen | Puede mostrar anuncios; el video debe permitir incrustarse                                                                                                                                               |
 
 ### Filtros de calidad al buscar
 
@@ -92,11 +92,11 @@ Se usa **YouTube** porque es gratuito y no requiere cuenta Premium.
 
 ### Otras opciones descartadas
 
-| Opción | Motivo |
-|---|---|
-| Spotify Web Playback SDK | Requiere cuenta **Premium** para reproducir desde la app, así que no cumple con gratuito |
-| YouTube Music / Spotify como app externa | No permite cola controlada por nosotros |
-| Jamendo (música libre) | Catálogo pequeño para radio de gimnasio. Es una alternativa si después necesitan licencia clara |
+| Opción                                   | Motivo                                                                                          |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Spotify Web Playback SDK                 | Requiere cuenta **Premium** para reproducir desde la app, así que no cumple con gratuito        |
+| YouTube Music / Spotify como app externa | No permite cola controlada por nosotros                                                         |
+| Jamendo (música libre)                   | Catálogo pequeño para radio de gimnasio. Es una alternativa si después necesitan licencia clara |
 
 ### Advertencias
 
@@ -161,21 +161,21 @@ Se usa **YouTube** porque es gratuito y no requiere cuenta Premium.
 
 ### 4.4 Límites de solicitudes (confirmados)
 
-| Regla | Valor | Configurable en |
-|---|---|---|
-| Solicitudes por socio en una ventana móvil | **5 cada 30 min** | `settings` |
-| Intervalo mínimo entre solicitudes de un mismo socio | **1 cada 6 min** | `settings` |
+| Regla                                                | Valor             | Configurable en |
+| ---------------------------------------------------- | ----------------- | --------------- |
+| Solicitudes por socio en una ventana móvil           | **5 cada 30 min** | `settings`      |
+| Intervalo mínimo entre solicitudes de un mismo socio | **1 cada 6 min**  | `settings`      |
 
 Ambas reglas se aplican en el backend. Si el socio supera alguna, la respuesta indica el código (`REQUEST_COOLDOWN` o `REQUEST_QUOTA_EXCEEDED`) y cuánto debe esperar (`retry_after`). Las cuentas bloqueadas por staff no pueden solicitar.
 
 ### 4.5 Roles
 
-| Rol | Puede |
-|---|---|
-| `member` | Solicitar, guardar, gestionar sus playlists |
-| `staff` | Todo lo de `member` + ver cola, saltar, eliminar solicitudes, bloquear canciones / artistas / palabras / socios, pausar y reordenar |
-| `admin` | Todo lo anterior + configuración de límites, ver auditoría, forzar sincronización con el ERP |
-| `display` | Cuenta técnica de la pantalla: lee la cola y ejecuta la reproducción. No puede editar nada |
+| Rol       | Puede                                                                                                                               |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `member`  | Solicitar, guardar, gestionar sus playlists                                                                                         |
+| `staff`   | Todo lo de `member` + ver cola, saltar, eliminar solicitudes, bloquear canciones / artistas / palabras / socios, pausar y reordenar |
+| `admin`   | Todo lo anterior + configuración de límites, ver auditoría, forzar sincronización con el ERP                                        |
+| `display` | Cuenta técnica de la pantalla: lee la cola y ejecuta la reproducción. No puede editar nada                                          |
 
 ---
 
@@ -238,19 +238,19 @@ audit_log        id, actor_id, action, entity, entity_id, payload, created_at
 
 ## 7. API (resumen)
 
-| Área | Endpoints principales |
-|---|---|
-| Auth | `POST /auth/login` (credenciales del ERP), `POST /auth/refresh`, `POST /auth/logout`, `GET /me` |
-| Catálogo | `GET /tracks/search?q=` (con caché), `GET /tracks/:id` |
-| Solicitudes | `POST /requests`, `GET /requests/mine`, `GET /queue` (5 anteriores, actual, siguientes) |
-| Playlists | `GET/POST /playlists`, `PATCH/DELETE /playlists/:id`, `POST/DELETE /playlists/:id/items/:trackId` |
-| Favoritos | `PUT/DELETE /favorites/:trackId` |
-| Staff — cola | `POST /staff/queue/skip`, `DELETE /staff/requests/:id`, `POST /staff/queue/reorder`, `POST /staff/player/pause`, `POST /staff/player/resume` |
-| Staff — bloqueos | `GET/POST /staff/blocklist`, `DELETE /staff/blocklist/:id`, `POST /staff/users/:id/block`, `DELETE /staff/users/:id/block` |
-| Staff — socios | `GET /staff/users` (solo lectura, sincronizado con el ERP) |
-| Admin | `GET/PATCH /admin/settings`, `GET /admin/audit`, `POST /admin/erp/sync` |
-| Integración | `POST /integrations/erp/members` (firmado con HMAC) |
-| Tiempo real | Eventos `queue:updated`, `playback:changed`, `request:status`, `blocklist:changed` |
+| Área             | Endpoints principales                                                                                                                        |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Auth             | `POST /auth/login` (credenciales del ERP), `POST /auth/refresh`, `POST /auth/logout`, `GET /me`                                              |
+| Catálogo         | `GET /tracks/search?q=` (con caché), `GET /tracks/:id`                                                                                       |
+| Solicitudes      | `POST /requests`, `GET /requests/mine`, `GET /queue` (5 anteriores, actual, siguientes)                                                      |
+| Playlists        | `GET/POST /playlists`, `PATCH/DELETE /playlists/:id`, `POST/DELETE /playlists/:id/items/:trackId`                                            |
+| Favoritos        | `PUT/DELETE /favorites/:trackId`                                                                                                             |
+| Staff — cola     | `POST /staff/queue/skip`, `DELETE /staff/requests/:id`, `POST /staff/queue/reorder`, `POST /staff/player/pause`, `POST /staff/player/resume` |
+| Staff — bloqueos | `GET/POST /staff/blocklist`, `DELETE /staff/blocklist/:id`, `POST /staff/users/:id/block`, `DELETE /staff/users/:id/block`                   |
+| Staff — socios   | `GET /staff/users` (solo lectura, sincronizado con el ERP)                                                                                   |
+| Admin            | `GET/PATCH /admin/settings`, `GET /admin/audit`, `POST /admin/erp/sync`                                                                      |
+| Integración      | `POST /integrations/erp/members` (firmado con HMAC)                                                                                          |
+| Tiempo real      | Eventos `queue:updated`, `playback:changed`, `request:status`, `blocklist:changed`                                                           |
 
 Las respuestas de error usan un formato único `{ code, message, details }`. Documentación OpenAPI generada desde el backend.
 
@@ -258,24 +258,24 @@ Las respuestas de error usan un formato único `{ code, message, details }`. Doc
 
 ## 8. Stack tecnológico (propuesta)
 
-| Capa | Tecnología | Motivo |
-|---|---|---|
-| Lenguaje | TypeScript en todo el repo | Tipos compartidos entre front y back |
-| Monorepo | pnpm workspaces + Turborepo | Un solo repo, paquetes compartidos |
-| Frontend (socio, staff, pantalla) | React + Vite + TailwindCSS | Rápido, buen soporte PWA |
-| PWA | vite-plugin-pwa | Instalable, caché de la app |
-| Idiomas | react-i18next (es, en) | Textos fuera del código desde el inicio |
-| Estado / datos | TanStack Query + Zustand | Caché de servidor y estado local simple |
-| Validación compartida | Zod (en `packages/shared`) | Mismos esquemas en cliente y servidor |
-| Backend | NestJS + Fastify adapter | Módulos, guards por rol, Swagger integrado |
-| Tiempo real | Socket.IO | Reconexión automática, salas por rol |
-| Base de datos | PostgreSQL + Prisma | Relacional, migraciones versionadas |
-| Caché / límites | Redis (opcional en fase 1) | Ventanas de límite y escalado de sockets |
-| Auth | JWT corto + refresh token en cookie httpOnly | Seguro para móvil y panel |
-| Pruebas | Vitest (unitarias), Supertest (API), Playwright (e2e móvil) | Cobertura en las tres capas |
-| Calidad | ESLint, Prettier, Husky + lint-staged, Commitlint | Commits y código consistentes |
-| CI | GitHub Actions | Lint, tipos, tests y build en cada PR |
-| Despliegue | Docker Compose (api, web, db, redis) en un VPS o en la misma PC | Simple, portable |
+| Capa                              | Tecnología                                                      | Motivo                                     |
+| --------------------------------- | --------------------------------------------------------------- | ------------------------------------------ |
+| Lenguaje                          | TypeScript en todo el repo                                      | Tipos compartidos entre front y back       |
+| Monorepo                          | pnpm workspaces + Turborepo                                     | Un solo repo, paquetes compartidos         |
+| Frontend (socio, staff, pantalla) | React + Vite + TailwindCSS                                      | Rápido, buen soporte PWA                   |
+| PWA                               | vite-plugin-pwa                                                 | Instalable, caché de la app                |
+| Idiomas                           | react-i18next (es, en)                                          | Textos fuera del código desde el inicio    |
+| Estado / datos                    | TanStack Query + Zustand                                        | Caché de servidor y estado local simple    |
+| Validación compartida             | Zod (en `packages/shared`)                                      | Mismos esquemas en cliente y servidor      |
+| Backend                           | NestJS + Fastify adapter                                        | Módulos, guards por rol, Swagger integrado |
+| Tiempo real                       | Socket.IO                                                       | Reconexión automática, salas por rol       |
+| Base de datos                     | PostgreSQL + Prisma                                             | Relacional, migraciones versionadas        |
+| Caché / límites                   | Redis (opcional en fase 1)                                      | Ventanas de límite y escalado de sockets   |
+| Auth                              | JWT corto + refresh token en cookie httpOnly                    | Seguro para móvil y panel                  |
+| Pruebas                           | Vitest (unitarias), Supertest (API), Playwright (e2e móvil)     | Cobertura en las tres capas                |
+| Calidad                           | ESLint, Prettier, Husky + lint-staged, Commitlint               | Commits y código consistentes              |
+| CI                                | GitHub Actions                                                  | Lint, tipos, tests y build en cada PR      |
+| Despliegue                        | Docker Compose (api, web, db, redis) en un VPS o en la misma PC | Simple, portable                           |
 
 ---
 
@@ -306,6 +306,7 @@ prueba-radio/
 Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad lógica, con Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `test:`).
 
 ### Fase 0 — Base del proyecto
+
 - `chore: inicializar monorepo con pnpm y Turborepo`
 - `chore: configurar TypeScript, ESLint, Prettier y Commitlint`
 - `chore: añadir Docker Compose con PostgreSQL y Redis`
@@ -314,6 +315,7 @@ Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad
 **Hecho cuando:** `pnpm install && pnpm build && pnpm test` pasan en CI.
 
 ### Fase 1 — Socios y autenticación con credenciales del ERP
+
 - `feat(api): modelo de usuarios y roles con Prisma`
 - `feat(api): interfaz MemberProvider y adaptador de ejemplo (ERP ficticio)`
 - `feat(api): login contra el ERP y sesión con JWT + refresh token`
@@ -324,6 +326,7 @@ Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad
 **Hecho cuando:** un socio entra con sus credenciales del ERP y, si el ERP lo marca como suspendido, la sesión se cierra.
 
 ### Fase 2 — Catálogo y búsqueda
+
 - `feat(music): interfaz MusicProvider y adaptador de YouTube Data API`
 - `feat(api): búsqueda con filtros (categoría Música, embeddable) y caché en tracks`
 - `feat(api): control de cuota diaria de YouTube`
@@ -332,6 +335,7 @@ Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad
 **Hecho cuando:** un socio busca y ve resultados con portada, título y artista, sin superar la cuota diaria.
 
 ### Fase 3 — Solicitudes, límites y cola
+
 - `feat(api): crear solicitud con límites 5/30 min y 1/6 min`
 - `feat(api): filtro de blocklist y de socios bloqueados al solicitar`
 - `feat(api): cola con 5 anteriores, actual y siguientes`
@@ -342,6 +346,7 @@ Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad
 **Hecho cuando:** un socio pide una canción, ve su número de orden, ve el límite restante y ve avanzar la cola en tiempo real.
 
 ### Fase 4 — Reproducción en la pantalla del gimnasio
+
 - `feat(display): reproductor con YouTube IFrame Player API`
 - `feat(display): botón de inicio y modo pantalla completa`
 - `feat(display): reconexión automática y resincronización de la cola`
@@ -351,6 +356,7 @@ Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad
 **Hecho cuando:** la PC reproduce la cola en orden por los altavoces y se recupera sola tras un corte de red.
 
 ### Fase 5 — Experiencia del socio
+
 - `feat(api): favoritos y playlists CRUD`
 - `feat(web): botón “Guardar” en la reproducción actual`
 - `feat(web): gestión de playlists propias`
@@ -359,6 +365,7 @@ Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad
 **Hecho cuando:** un socio guarda una canción que suena y la encuentra en su playlist.
 
 ### Fase 6 — Panel de staff
+
 - `feat(api): saltar canción actual y eliminar solicitudes de la cola`
 - `feat(api): blocklist por canción, artista y palabra clave`
 - `feat(api): bloqueo de socios (temporal o permanente)`
@@ -370,6 +377,7 @@ Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad
 **Hecho cuando:** staff ve usuario y canción de cada solicitud, puede saltarla o eliminarla, bloquear una canción o socio, y queda registro en auditoría.
 
 ### Fase 7 — Integración con ERP
+
 - `feat(api): endpoint de sincronización con firma HMAC`
 - `feat(api): job de sincronización cada 15 min (pull de respaldo)`
 - `feat(api): adaptador ERP según contrato real (pendiente)`
@@ -378,6 +386,7 @@ Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad
 **Hecho cuando:** un cambio de estado en el ERP se refleja en PulsoFM sin intervención manual.
 
 ### Fase 8 — Endurecimiento y entrega
+
 - `test(e2e): flujos de socio, staff y pantalla con Playwright en móvil`
 - `feat(web): instalación como PWA y caché offline del shell`
 - `perf: revisión de consultas y de cuota de YouTube`
@@ -388,15 +397,15 @@ Cada fase termina con la app funcionando y pruebas pasando. Un commit por unidad
 
 ## 11. Riesgos
 
-| Riesgo | Impacto | Mitigación |
-|---|---|---|
-| Se agota la cuota diaria de YouTube (10 000 u.) | Alto | Caché de búsquedas, *debounce* en el buscador, monitor de cuota en el panel de admin |
-| Video no incrustable o con anuncios | Medio | Filtro `embeddable`, salto automático y aviso al staff |
-| ERP sin API utilizable | Alto | Plan B: importación CSV programada o cuentas locales temporales |
-| Caída de la PC o de la red del gimnasio | Medio | Arranque automático, reconexión y modo respaldo |
-| Socios piden la misma canción repetida | Bajo | Aviso “ya está en cola” (v2) y límites por socio |
-| Contenido inapropiado | Medio | Blocklist, filtro manual, eliminación por staff |
-| Uso comercial sin licencia de música pública | Alto (legal) | Mantener el proyecto académico; validar licencia antes de un despliegue real |
+| Riesgo                                          | Impacto      | Mitigación                                                                           |
+| ----------------------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
+| Se agota la cuota diaria de YouTube (10 000 u.) | Alto         | Caché de búsquedas, _debounce_ en el buscador, monitor de cuota en el panel de admin |
+| Video no incrustable o con anuncios             | Medio        | Filtro `embeddable`, salto automático y aviso al staff                               |
+| ERP sin API utilizable                          | Alto         | Plan B: importación CSV programada o cuentas locales temporales                      |
+| Caída de la PC o de la red del gimnasio         | Medio        | Arranque automático, reconexión y modo respaldo                                      |
+| Socios piden la misma canción repetida          | Bajo         | Aviso “ya está en cola” (v2) y límites por socio                                     |
+| Contenido inapropiado                           | Medio        | Blocklist, filtro manual, eliminación por staff                                      |
+| Uso comercial sin licencia de música pública    | Alto (legal) | Mantener el proyecto académico; validar licencia antes de un despliegue real         |
 
 ---
 
