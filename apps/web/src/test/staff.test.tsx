@@ -37,7 +37,7 @@ const snapshot = {
 };
 
 const hoisted = vi.hoisted(() => ({
-  live: { snapshot: { previous: [], current: null, upcoming: [], paused: false } } as unknown,
+  live: { snapshot: { previous: [], current: null, upcoming: [], paused: false } as unknown },
 }));
 vi.mock('../realtime/useQueue', () => ({
   useQueue: () => ({ snapshot: hoisted.live.snapshot, connected: true }),
