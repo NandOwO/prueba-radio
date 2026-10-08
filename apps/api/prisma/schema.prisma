@@ -155,3 +155,16 @@ model Favorite {
   @@id([userId, trackId])
   @@map("favorites")
 }
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("audit_log")
+}

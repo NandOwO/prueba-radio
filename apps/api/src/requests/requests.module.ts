@@ -13,6 +13,6 @@ import { RequestsService } from './requests.service';
   imports: [AuthModule],
   controllers: [RequestsController, QueueController, PlayerController],
   providers: [RequestsService, BlocklistService, QueueService, PlaybackService, PrismaService],
-  exports: [RequestsService, QueueService],
+  exports: [RequestsService, QueueService, PlaybackService, BlocklistService],
 })
 export class RequestsModule {}
