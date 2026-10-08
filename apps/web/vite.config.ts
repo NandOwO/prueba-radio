@@ -5,6 +5,19 @@ import { defineConfig } from 'vitest/config';
 
 const apiTarget = process.env.API_PROXY_TARGET ?? 'http://localhost:3000';
 
+const API_PREFIXES = [
+  '/auth',
+  '/tracks',
+  '/requests',
+  '/queue',
+  '/player',
+  '/library',
+  '/staff',
+  '/admin',
+  '/integrations',
+  '/health',
+];
+
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
@@ -16,19 +29,9 @@ export default defineConfig({
     },
   },
   server: {
+    // Rutas del API. Las rutas de la app no usan estos prefijos, así que no hay colisiones.
     proxy: {
-      ...Object.fromEntries(
-        ['/auth', '/tracks', '/requests', '/queue', '/staff', '/health'].map((path) => [
-          path,
-          {
-            target: apiTarget,
-            // Una navegación del navegador (HTML) a una ruta de la app, como /queue, se sirve con la web
-            // y no con el API. Las llamadas de datos (JSON) sí van al API.
-            bypass: (req: { headers: { accept?: string } }) =>
-              req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
-          },
-        ]),
-      ),
+      ...Object.fromEntries(API_PREFIXES.map((path) => [path, { target: apiTarget }])),
       '/socket.io': { target: apiTarget, ws: true },
     },
   },

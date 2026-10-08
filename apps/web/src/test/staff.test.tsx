@@ -140,7 +140,7 @@ describe('Panel de staff', () => {
       vi.fn(async () => json(401, { code: 'SESSION_EXPIRED' })),
     );
     render(
-      <MemoryRouter initialEntries={['/staff']}>
+      <MemoryRouter initialEntries={['/panel']}>
         <AuthProvider>
           <RequireRole roles={['staff', 'admin']}>
             <p>Secreto</p>

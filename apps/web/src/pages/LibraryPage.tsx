@@ -74,7 +74,7 @@ export function LibraryPage() {
           {playlists.map((p) => (
             <li key={p.id}>
               <Link
-                to={`/library/${p.id}`}
+                to={`/biblioteca/${p.id}`}
                 className="flex min-h-12 items-center justify-between gap-3 p-4"
               >
                 <span className="truncate font-medium">{p.name}</span>

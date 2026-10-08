@@ -349,7 +349,7 @@ export function StaffPage() {
         </Link>
         {state.status === 'authenticated' && state.user.role === 'admin' && (
           <Link
-            to="/staff/audit"
+            to="/panel/auditoria"
             className="min-h-11 inline-flex items-center text-sm font-medium text-[var(--color-accent)]"
           >
             {t('staff.auditLink')}

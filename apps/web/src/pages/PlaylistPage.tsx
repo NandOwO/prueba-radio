@@ -41,14 +41,14 @@ export function PlaylistPage() {
   async function remove_playlist() {
     if (!window.confirm(t('playlist.confirmDelete'))) return;
     await deletePlaylist(id);
-    navigate('/library', { replace: true });
+    navigate('/biblioteca', { replace: true });
   }
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-4 py-6">
       <header className="flex items-center justify-between gap-4">
         <Link
-          to="/library"
+          to="/biblioteca"
           className="min-h-11 inline-flex items-center text-sm font-medium text-[var(--color-accent)]"
         >
           ← {t('library.title')}

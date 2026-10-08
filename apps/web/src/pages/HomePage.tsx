@@ -23,7 +23,7 @@ export function HomePage() {
       <nav className="flex flex-col gap-3">
         {['staff', 'admin'].includes(state.user.role) && (
           <Link
-            to="/staff"
+            to="/panel"
             className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-accent)] px-4 text-base font-semibold text-[var(--color-accent)]"
           >
             {t('home.staffLink')}
@@ -36,19 +36,19 @@ export function HomePage() {
           {t('home.searchLink')}
         </Link>
         <Link
-          to="/queue"
+          to="/cola"
           className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 text-base font-semibold"
         >
           {t('home.queueLink')}
         </Link>
         <Link
-          to="/library"
+          to="/biblioteca"
           className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 text-base font-semibold"
         >
           {t('home.libraryLink')}
         </Link>
         <Link
-          to="/requests"
+          to="/mis-solicitudes"
           className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 text-base font-semibold"
         >
           {t('home.requestsLink')}

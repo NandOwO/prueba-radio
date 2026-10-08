@@ -46,7 +46,7 @@ export function App() {
             }
           />
           <Route
-            path="/requests"
+            path="/mis-solicitudes"
             element={
               <Protected>
                 <RequestsPage />
@@ -54,7 +54,7 @@ export function App() {
             }
           />
           <Route
-            path="/queue"
+            path="/cola"
             element={
               <Protected>
                 <QueuePage />
@@ -70,7 +70,7 @@ export function App() {
             }
           />
           <Route
-            path="/library"
+            path="/biblioteca"
             element={
               <Protected>
                 <LibraryPage />
@@ -78,7 +78,7 @@ export function App() {
             }
           />
           <Route
-            path="/library/:id"
+            path="/biblioteca/:id"
             element={
               <Protected>
                 <PlaylistPage />
@@ -86,7 +86,7 @@ export function App() {
             }
           />
           <Route
-            path="/staff"
+            path="/panel"
             element={
               <Protected>
                 <RequireRole roles={['staff', 'admin']}>
@@ -96,7 +96,7 @@ export function App() {
             }
           />
           <Route
-            path="/staff/audit"
+            path="/panel/auditoria"
             element={
               <Protected>
                 <RequireRole roles={['admin']}>
