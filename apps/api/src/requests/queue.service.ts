@@ -9,7 +9,14 @@ export interface QueueItem {
   id: string;
   status: string;
   position: number;
-  track: { id: string; title: string; artist: string; durationMs: number; coverUrl: string | null };
+  track: {
+    id: string;
+    providerTrackId: string;
+    title: string;
+    artist: string;
+    durationMs: number;
+    coverUrl: string | null;
+  };
   requestedBy: string;
 }
 
@@ -78,6 +85,7 @@ export class QueueService {
       position: r.position,
       track: {
         id: r.track.id,
+        providerTrackId: r.track.providerTrackId,
         title: r.track.title,
         artist: r.track.artist,
         durationMs: r.track.durationMs,
