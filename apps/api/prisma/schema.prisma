@@ -108,3 +108,11 @@ model UserBlock {
   @@index([userId])
   @@map("user_blocks")
 }
+
+model PlaybackState {
+  id        String   @id @default("singleton")
+  paused    Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+
+  @@map("playback_state")
+}

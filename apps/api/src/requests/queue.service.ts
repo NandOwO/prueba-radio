@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'node:events';
 import { PrismaService } from '../prisma.service';
+import { PlaybackService } from './playback.service';
 
 export const PREVIOUS_LIMIT = 5;
 
@@ -16,6 +17,7 @@ export interface QueueSnapshot {
   previous: QueueItem[];
   current: QueueItem | null;
   upcoming: QueueItem[];
+  paused: boolean;
 }
 
 /** Primer nombre del socio. La cola es visible para todos los socios, así que no mostramos el apellido. */
@@ -28,7 +30,10 @@ export class QueueService {
   /** Se emite "changed" cada vez que cambia la cola. Lo escucha el canal de tiempo real. */
   readonly changes = new EventEmitter();
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly playback: PlaybackService,
+  ) {}
 
   notifyChanged(): void {
     this.changes.emit('changed');
@@ -72,6 +77,7 @@ export class QueueService {
       previous: previousRows.map(toItem),
       current: currentRow ? toItem(currentRow) : null,
       upcoming: upcomingRows.map(toItem),
+      paused: await this.playback.isPaused(),
     };
   }
 

@@ -111,6 +111,7 @@ export class AuthService {
   }
 
   private async syncUser(member: Member) {
+    const roleOverride = this.config.roleOverrides[member.externalId];
     return this.prisma.user.upsert({
       where: { externalId: member.externalId },
       create: {
@@ -119,12 +120,14 @@ export class AuthService {
         name: member.fullName,
         status: member.status,
         lastSyncedAt: new Date(),
+        role: roleOverride ?? 'member',
       },
       update: {
         username: member.username,
         name: member.fullName,
         status: member.status,
         lastSyncedAt: new Date(),
+        ...(roleOverride ? { role: roleOverride } : {}),
       },
     });
   }

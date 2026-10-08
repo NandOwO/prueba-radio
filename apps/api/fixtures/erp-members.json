@@ -24,6 +24,14 @@
       "fullName": "Ana Ruiz",
       "status": "active",
       "updatedAt": "2026-10-05T12:00:00Z"
+    },
+    {
+      "id": "DISPLAY-01",
+      "username": "pantalla.gym",
+      "password": "gym-display",
+      "fullName": "Pantalla del gimnasio",
+      "status": "active",
+      "updatedAt": "2026-10-01T00:00:00Z"
     }
   ]
 }
