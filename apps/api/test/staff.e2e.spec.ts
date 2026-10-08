@@ -246,6 +246,16 @@ describe('Panel de staff', () => {
     expect(allowed.status).toBe(201);
   });
 
+  it('muestra a staff el nombre completo de quien pidió cada canción', async () => {
+    const res = await as('get', '/staff/queue');
+    expect(res.body.upcoming[0]).toMatchObject({ requestedBy: 'María López' });
+
+    const member = await request(app.getHttpServer())
+      .get('/queue')
+      .set('Authorization', `Bearer ${memberToken}`);
+    expect(member.body.upcoming[0].requestedBy).toBe('María');
+  });
+
   it('el registro de auditoría es solo para administradores', async () => {
     expect((await as('get', '/admin/audit')).status).toBe(403);
     expect((await as('get', '/admin/audit', adminToken)).status).toBe(200);

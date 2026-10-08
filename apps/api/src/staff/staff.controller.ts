@@ -18,6 +18,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../common/roles.decorator';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { AuditService } from '../audit/audit.service';
+import { QueueService } from '../requests/queue.service';
 import { StaffService } from './staff.service';
 
 type AuthedRequest = FastifyRequest & { user: CurrentUser };
@@ -48,7 +49,14 @@ export class StaffController {
   constructor(
     private readonly staff: StaffService,
     private readonly audit: AuditService,
+    private readonly queue: QueueService,
   ) {}
+
+  /** Cola con el nombre completo de quien pidió cada canción. */
+  @Get('staff/queue')
+  queueForStaff() {
+    return this.queue.snapshot({ fullNames: true });
+  }
 
   @Get('staff/ping')
   ping(@Req() req: AuthedRequest) {

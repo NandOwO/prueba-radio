@@ -60,7 +60,8 @@ export class QueueService {
     this.changes.emit('changed');
   }
 
-  async snapshot(): Promise<QueueSnapshot> {
+  /** Por defecto solo el primer nombre de quien pidió. El staff ve el nombre completo. */
+  async snapshot(options: { fullNames?: boolean } = {}): Promise<QueueSnapshot> {
     const [previousRows, currentRow, upcomingRows] = await Promise.all([
       this.prisma.request.findMany({
         where: { status: { in: ['played', 'skipped'] } },
@@ -91,7 +92,7 @@ export class QueueService {
         durationMs: r.track.durationMs,
         coverUrl: r.track.coverUrl,
       },
-      requestedBy: firstName(r.user.name),
+      requestedBy: options.fullNames ? r.user.name : firstName(r.user.name),
     });
 
     return {
