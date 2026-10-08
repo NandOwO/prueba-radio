@@ -48,8 +48,8 @@ describe('Buscador de canciones', () => {
     await userEvent.type(screen.getByLabelText('Canción o artista'), 'queen');
 
     expect(await screen.findByText('Don’t Stop Me Now')).toBeInTheDocument();
-    expect(screen.getByText('Queen')).toBeInTheDocument();
-    expect(screen.getByText('3:29')).toBeInTheDocument();
+    expect(screen.getByText(/Queen/)).toBeInTheDocument();
+    expect(screen.getByText(/3:29/)).toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledWith(
       '/tracks/search?q=queen',
       expect.objectContaining({ credentials: 'include' }),

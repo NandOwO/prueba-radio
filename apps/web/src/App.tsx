@@ -1,19 +1,22 @@
+import type { ReactNode } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AuthProvider, useAuth } from './auth/AuthContext';
-import { HomePage } from './pages/HomePage';
-import { AuditPage } from './pages/AuditPage';
-import { LibraryPage } from './pages/LibraryPage';
-import { StaffPage } from './pages/StaffPage';
+import { AppShell } from './components/AppShell';
 import { RequireRole } from './components/RequireRole';
+import { AuditPage } from './pages/AuditPage';
+import { DisplayPage } from './pages/DisplayPage';
+import { HomePage } from './pages/HomePage';
+import { LibraryPage } from './pages/LibraryPage';
 import { LoginPage } from './pages/LoginPage';
 import { PlaylistPage } from './pages/PlaylistPage';
-import { DisplayPage } from './pages/DisplayPage';
 import { QueuePage } from './pages/QueuePage';
 import { RequestsPage } from './pages/RequestsPage';
 import { SearchPage } from './pages/SearchPage';
-import { useTranslation } from 'react-i18next';
+import { StaffPage } from './pages/StaffPage';
 
-function Protected({ children }: { children: React.ReactNode }) {
+/** Exige sesión. Sin sesión, vuelve al login. */
+function Protected({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
   const { state } = useAuth();
   if (state.status === 'loading') {
@@ -23,44 +26,21 @@ function Protected({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+/** Páginas de socio y staff: sesión + cáscara con navegación. */
+function Shell({ children }: { children: ReactNode }) {
+  return (
+    <Protected>
+      <AppShell>{children}</AppShell>
+    </Protected>
+  );
+}
+
 export function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              <Protected>
-                <HomePage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/search"
-            element={
-              <Protected>
-                <SearchPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/mis-solicitudes"
-            element={
-              <Protected>
-                <RequestsPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/cola"
-            element={
-              <Protected>
-                <QueuePage />
-              </Protected>
-            }
-          />
           <Route
             path="/display"
             element={
@@ -70,39 +50,71 @@ export function App() {
             }
           />
           <Route
+            path="/"
+            element={
+              <Shell>
+                <HomePage />
+              </Shell>
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              <Shell>
+                <SearchPage />
+              </Shell>
+            }
+          />
+          <Route
+            path="/mis-solicitudes"
+            element={
+              <Shell>
+                <RequestsPage />
+              </Shell>
+            }
+          />
+          <Route
+            path="/cola"
+            element={
+              <Shell>
+                <QueuePage />
+              </Shell>
+            }
+          />
+          <Route
             path="/biblioteca"
             element={
-              <Protected>
+              <Shell>
                 <LibraryPage />
-              </Protected>
+              </Shell>
             }
           />
           <Route
             path="/biblioteca/:id"
             element={
-              <Protected>
+              <Shell>
                 <PlaylistPage />
-              </Protected>
+              </Shell>
             }
           />
           <Route
             path="/panel"
             element={
-              <Protected>
+              <Shell>
                 <RequireRole roles={['staff', 'admin']}>
                   <StaffPage />
                 </RequireRole>
-              </Protected>
+              </Shell>
             }
           />
           <Route
             path="/panel/auditoria"
             element={
-              <Protected>
+              <Shell>
                 <RequireRole roles={['admin']}>
                   <AuditPage />
                 </RequireRole>
-              </Protected>
+              </Shell>
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />

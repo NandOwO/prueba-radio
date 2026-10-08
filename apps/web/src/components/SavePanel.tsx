@@ -88,9 +88,13 @@ export function SavePanel({ trackId, title, onClose }: Props) {
       role="dialog"
       aria-modal="true"
       aria-label={t('save.title')}
-      className="fixed inset-0 z-50 flex items-end bg-black/50"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm"
     >
-      <div className="max-h-[80dvh] w-full overflow-y-auto rounded-t-3xl bg-[var(--color-surface)] p-5 shadow-2xl">
+      <div className="max-h-[85dvh] w-full max-w-2xl overflow-y-auto rounded-t-3xl border-t border-[var(--color-border)] bg-[var(--color-surface)] p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl">
+        <div
+          className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-[var(--color-border)]"
+          aria-hidden="true"
+        />
         <div className="mb-4 flex items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-sm text-[var(--color-muted)]">{t('save.title')}</p>
@@ -113,7 +117,7 @@ export function SavePanel({ trackId, title, onClose }: Props) {
               type="button"
               onClick={() => void toggleFavorite()}
               aria-pressed={favorite}
-              className="mb-3 flex min-h-12 w-full items-center justify-between rounded-xl border border-[var(--color-border)] px-4 text-base font-medium aria-pressed:border-[var(--color-accent)] aria-pressed:text-[var(--color-accent)]"
+              className="mb-3 flex min-h-14 w-full items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-base font-semibold aria-pressed:border-[var(--color-accent-2)] aria-pressed:text-[var(--color-accent-2)]"
             >
               {t('save.favorite')}
               <span aria-hidden="true">{favorite ? '♥' : '♡'}</span>
@@ -126,7 +130,7 @@ export function SavePanel({ trackId, title, onClose }: Props) {
                     type="button"
                     onClick={() => void togglePlaylist(p)}
                     aria-pressed={inPlaylists.has(p.id)}
-                    className="flex min-h-12 w-full items-center justify-between rounded-xl border border-[var(--color-border)] px-4 text-base aria-pressed:border-[var(--color-accent)]"
+                    className="flex min-h-14 w-full items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-base aria-pressed:border-[var(--color-accent)]"
                   >
                     <span className="truncate">{p.name}</span>
                     <span aria-hidden="true">{inPlaylists.has(p.id) ? '✓' : '+'}</span>

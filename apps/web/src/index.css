@@ -1,38 +1,42 @@
 @import 'tailwindcss';
 
+/* Paleta: oscura por defecto (una radio en una sala con poca luz). */
 :root {
-  --color-bg: #f8fafc;
+  --color-bg: #0a0e1a;
+  --color-bg-accent: #161033;
+  --color-surface: #121a2c;
+  --color-surface-2: #1a2440;
+  --color-text: #e8edf7;
+  --color-muted: #8b97b3;
+  --color-border: #26324f;
+  --color-accent: #a78bfa;
+  --color-accent-2: #f472b6;
+  --color-accent-text: #0a0e1a;
+  --color-danger: #fca5a5;
+  --color-success: #6ee7b7;
+  --gradient-brand: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6);
+}
+
+:root[data-theme='light'] {
+  --color-bg: #f5f7fb;
+  --color-bg-accent: #ece8ff;
   --color-surface: #ffffff;
-  --color-text: #0f172a;
-  --color-muted: #64748b;
-  --color-border: #cbd5e1;
-  --color-accent: #7c3aed;
+  --color-surface-2: #f1f4fa;
+  --color-text: #111827;
+  --color-muted: #5b6478;
+  --color-border: #dde3ef;
+  --color-accent: #6d28d9;
+  --color-accent-2: #db2777;
   --color-accent-text: #ffffff;
   --color-danger: #b91c1c;
+  --color-success: #047857;
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.06), 0 8px 24px -12px rgb(15 23 42 / 0.18);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --color-bg: #0b1120;
-    --color-surface: #111a2e;
-    --color-text: #e2e8f0;
-    --color-muted: #94a3b8;
-    --color-border: #334155;
-    --color-accent: #a78bfa;
-    --color-accent-text: #0b1120;
-    --color-danger: #fca5a5;
-  }
-}
-
-:root[data-theme='dark'] {
-  --color-bg: #0b1120;
-  --color-surface: #111a2e;
-  --color-text: #e2e8f0;
-  --color-muted: #94a3b8;
-  --color-border: #334155;
-  --color-accent: #a78bfa;
-  --color-accent-text: #0b1120;
-  --color-danger: #fca5a5;
+/* Degradado de marca como imagen de fondo (un color de fondo no admite gradientes). */
+.bg-brand {
+  background-image: var(--gradient-brand);
 }
 
 html,
@@ -41,15 +45,41 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family:
+    ui-sans-serif,
     system-ui,
     -apple-system,
     'Segoe UI',
     Roboto,
+    'Helvetica Neue',
+    Arial,
     sans-serif;
   -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
   min-height: 100dvh;
   overflow-x: hidden;
+  /* Un halo de color arriba para dar carácter sin distraer. */
+  background-image: radial-gradient(
+    120% 60% at 50% -10%,
+    var(--color-bg-accent) 0%,
+    transparent 60%
+  );
+  background-repeat: no-repeat;
+}
+
+/* Foco visible para teclado y lectores de pantalla. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

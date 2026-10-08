@@ -3,33 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { apiFetch } from '../api/client';
 import { planPlayback } from '../display/playbackRules';
 import { createYouTubePlayer, type YtPlayer } from '../display/youtube';
-import { useQueue, type QueueItem } from '../realtime/useQueue';
+import { useQueue } from '../realtime/useQueue';
+import { Badge, Cover } from '../ui';
 
 function formatTime(seconds: number): string {
   const total = Math.max(0, Math.floor(seconds));
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
-}
-
-function NowPlaying({ item }: { item: QueueItem }) {
-  return (
-    <div className="flex flex-col items-center gap-4 text-center">
-      {item.track.coverUrl ? (
-        <img
-          src={item.track.coverUrl}
-          alt=""
-          className="aspect-square w-full max-w-72 rounded-3xl object-cover shadow-2xl"
-        />
-      ) : (
-        <div
-          aria-hidden="true"
-          className="aspect-square w-full max-w-72 rounded-3xl bg-[var(--color-border)]"
-        />
-      )}
-      <p className="line-clamp-2 text-3xl font-bold">{item.track.title}</p>
-      <p className="text-xl text-[var(--color-muted)]">{item.track.artist}</p>
-      <p className="text-base text-[var(--color-muted)]">{item.requestedBy}</p>
-    </div>
-  );
 }
 
 export function DisplayPage() {
@@ -100,7 +79,7 @@ export function DisplayPage() {
     progress.duration > 0 ? Math.min(100, (progress.current / progress.duration) * 100) : 0;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col items-center gap-6 px-6 py-8">
+    <main className="relative mx-auto flex min-h-dvh w-full max-w-4xl flex-col items-center gap-8 overflow-hidden px-6 py-8">
       {/* Reproductor oculto: el audio sale por los altavoces de la PC. */}
       <div
         ref={containerRef}
@@ -109,17 +88,17 @@ export function DisplayPage() {
       />
 
       <header className="flex w-full items-center justify-between">
-        <p className="text-lg font-bold">{t('common.appName')}</p>
-        <p className="text-sm text-[var(--color-muted)]">
+        <p className="text-lg font-bold tracking-tight">{t('common.appName')}</p>
+        <Badge tone={connected ? 'success' : 'danger'}>
           {connected ? t('display.online') : t('display.offline')}
-        </p>
+        </Badge>
       </header>
 
       {!started && (
         <button
           type="button"
           onClick={() => setStarted(true)}
-          className="min-h-16 rounded-2xl bg-[var(--color-accent)] px-10 text-2xl font-bold text-[var(--color-accent-text)]"
+          className="min-h-20 rounded-3xl bg-brand px-12 text-2xl font-bold text-white shadow-[0_20px_40px_-16px_rgb(236_72_153/0.8)] transition hover:brightness-110"
         >
           {t('display.start')}
         </button>
@@ -130,57 +109,70 @@ export function DisplayPage() {
           {t('display.playerError')}
         </p>
       )}
-
       {started && !ready && !failed && (
         <p className="text-base text-[var(--color-muted)]">{t('display.loadingPlayer')}</p>
       )}
 
       {current ? (
-        <>
-          <NowPlaying item={current} />
-          <div className="w-full max-w-md">
+        <section className="flex w-full flex-col items-center gap-6 text-center">
+          <div className="relative">
             <div
-              className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-border)]"
+              aria-hidden="true"
+              className="absolute -inset-6 rounded-[2rem] bg-brand opacity-30 blur-3xl"
+            />
+            <Cover src={current.track.coverUrl} title={current.track.title} size={288} />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Badge tone="accent">{paused ? t('display.paused') : t('queue.nowPlaying')}</Badge>
+            <p className="line-clamp-2 text-4xl font-extrabold tracking-tight">
+              {current.track.title}
+            </p>
+            <p className="text-xl text-[var(--color-muted)]">{current.track.artist}</p>
+            <p className="text-sm text-[var(--color-muted)]">
+              {t('display.requestedBy', { name: current.requestedBy })}
+            </p>
+          </div>
+          <div className="w-full max-w-xl">
+            <div
+              className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]"
               role="progressbar"
               aria-valuenow={Math.round(percent)}
               aria-valuemin={0}
               aria-valuemax={100}
             >
               <div
-                className="h-full bg-[var(--color-accent)] transition-[width] duration-1000"
+                className="h-full rounded-full bg-brand transition-[width] duration-1000"
                 style={{ width: `${percent}%` }}
               />
             </div>
-            <div className="mt-1 flex justify-between text-sm tabular-nums text-[var(--color-muted)]">
+            <div className="mt-2 flex justify-between text-sm tabular-nums text-[var(--color-muted)]">
               <span>{formatTime(progress.current)}</span>
               <span>{formatTime(progress.duration)}</span>
             </div>
           </div>
-          {paused && (
-            <p className="text-lg font-semibold text-[var(--color-accent)]">
-              {t('display.paused')}
-            </p>
-          )}
-        </>
+        </section>
       ) : (
-        snapshot && <p className="text-xl text-[var(--color-muted)]">{t('display.idle')}</p>
+        snapshot && <p className="text-2xl text-[var(--color-muted)]">{t('display.idle')}</p>
       )}
 
       {snapshot && snapshot.upcoming.length > 0 && (
-        <section className="w-full max-w-md">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+        <section className="w-full max-w-xl">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--color-muted)]">
             {t('display.upNext')}
           </h2>
           <ol className="flex flex-col gap-2">
             {snapshot.upcoming.slice(0, 5).map((item, index) => (
               <li
                 key={item.id}
-                className="flex items-center gap-3 rounded-xl bg-[var(--color-surface)] p-3"
+                className="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3"
               >
-                <span className="w-6 text-center font-semibold tabular-nums text-[var(--color-muted)]">
+                <span className="w-7 text-center text-lg font-bold tabular-nums text-[var(--color-accent)]">
                   {index + 1}
                 </span>
-                <span className="min-w-0 flex-1 truncate text-lg">{item.track.title}</span>
+                <Cover src={item.track.coverUrl} title={item.track.title} size={44} />
+                <span className="min-w-0 flex-1 truncate text-lg font-semibold">
+                  {item.track.title}
+                </span>
                 <span className="shrink-0 text-sm text-[var(--color-muted)]">
                   {item.requestedBy}
                 </span>

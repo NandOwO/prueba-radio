@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
@@ -19,10 +19,8 @@ import {
   type BlockType,
   type StaffUser,
 } from '../api/staff';
+import { Badge, Button, Card, Cover, EmptyState, ErrorText, Field, SectionTitle } from '../ui';
 import { useQueue, type QueueItem, type QueueSnapshot } from '../realtime/useQueue';
-
-const BUTTON =
-  'min-h-11 rounded-lg border border-[var(--color-border)] px-3 text-sm font-medium disabled:opacity-40';
 
 function QueueSection() {
   const { t } = useTranslation();
@@ -48,12 +46,15 @@ function QueueSection() {
   }
 
   const row = (item: QueueItem, controls: React.ReactNode) => (
-    <li key={item.id} className="flex flex-col gap-2 p-3">
-      <div className="min-w-0">
-        <p className="truncate font-semibold">{item.track.title}</p>
-        <p className="truncate text-sm text-[var(--color-muted)]">
-          {item.track.artist} · {t('staff.requestedBy', { name: item.requestedBy })}
-        </p>
+    <li key={item.id} className="flex flex-col gap-3 p-4">
+      <div className="flex min-w-0 items-center gap-3">
+        <Cover src={item.track.coverUrl} title={item.track.title} size={44} />
+        <div className="min-w-0">
+          <p className="truncate font-semibold">{item.track.title}</p>
+          <p className="truncate text-sm text-[var(--color-muted)]">
+            {item.track.artist} · {t('staff.requestedBy', { name: item.requestedBy })}
+          </p>
+        </div>
       </div>
       <div className="flex flex-wrap gap-2">{controls}</div>
     </li>
@@ -61,78 +62,70 @@ function QueueSection() {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">{t('staff.queue.title')}</h2>
+      <SectionTitle>{t('staff.queue.title')}</SectionTitle>
       <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          className={BUTTON}
-          onClick={() => act(() => skipCurrent())}
-          disabled={!snapshot?.current}
-        >
+        <Button size="sm" onClick={() => act(() => skipCurrent())} disabled={!snapshot?.current}>
           {t('staff.queue.skip')}
-        </button>
-        <button
-          type="button"
-          className={BUTTON}
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
           onClick={() => act(() => setPaused(!snapshot?.paused))}
         >
           {snapshot?.paused ? t('staff.queue.resume') : t('staff.queue.pause')}
-        </button>
+        </Button>
       </div>
       {errorKey && (
-        <p role="alert" className="text-sm text-[var(--color-danger)]">
-          {t(errorKey, { defaultValue: t('staff.errors.generic') })}
-        </p>
+        <ErrorText>{t(errorKey, { defaultValue: t('staff.errors.generic') })}</ErrorText>
       )}
 
       {snapshot?.current && (
-        <ul className="overflow-hidden rounded-2xl border border-[var(--color-accent)] bg-[var(--color-surface)]">
-          {row(
-            snapshot.current,
-            <span className="text-sm font-semibold text-[var(--color-accent)]">
-              {t('staff.queue.playing')}
-            </span>,
-          )}
-        </ul>
+        <Card className="overflow-hidden border-[var(--color-accent)]/60">
+          <ul>{row(snapshot.current, <Badge tone="success">{t('staff.queue.playing')}</Badge>)}</ul>
+        </Card>
       )}
 
-      <ul className="flex flex-col divide-y divide-[var(--color-border)] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-        {snapshot?.upcoming.map((item, index) =>
-          row(
-            item,
-            <>
-              <button
-                type="button"
-                className={BUTTON}
-                aria-label={t('staff.queue.up')}
-                disabled={index === 0}
-                onClick={() => act(() => moveRequest(item.id, 'up'))}
-              >
-                ↑
-              </button>
-              <button
-                type="button"
-                className={BUTTON}
-                aria-label={t('staff.queue.down')}
-                disabled={index === snapshot.upcoming.length - 1}
-                onClick={() => act(() => moveRequest(item.id, 'down'))}
-              >
-                ↓
-              </button>
-              <button
-                type="button"
-                className={BUTTON}
-                onClick={() => act(() => removeRequest(item.id))}
-              >
-                {t('staff.queue.remove')}
-              </button>
-            </>,
-          ),
-        )}
-        {snapshot && snapshot.upcoming.length === 0 && (
-          <li className="p-3 text-sm text-[var(--color-muted)]">{t('staff.queue.empty')}</li>
-        )}
-      </ul>
+      {snapshot && snapshot.upcoming.length === 0 && (
+        <EmptyState>{t('staff.queue.empty')}</EmptyState>
+      )}
+      {snapshot && snapshot.upcoming.length > 0 && (
+        <Card className="divide-y divide-[var(--color-border)] overflow-hidden">
+          <ul>
+            {snapshot.upcoming.map((item, index) =>
+              row(
+                item,
+                <>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    aria-label={t('staff.queue.up')}
+                    disabled={index === 0}
+                    onClick={() => act(() => moveRequest(item.id, 'up'))}
+                  >
+                    ↑
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    aria-label={t('staff.queue.down')}
+                    disabled={index === snapshot.upcoming.length - 1}
+                    onClick={() => act(() => moveRequest(item.id, 'down'))}
+                  >
+                    ↓
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => act(() => removeRequest(item.id))}
+                  >
+                    {t('staff.queue.remove')}
+                  </Button>
+                </>,
+              ),
+            )}
+          </ul>
+        </Card>
+      )}
     </section>
   );
 }
@@ -169,75 +162,74 @@ function BlocklistSection() {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">{t('staff.blocklist.title')}</h2>
-      <form
-        onSubmit={onAdd}
-        className="flex flex-col gap-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3"
-      >
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value as BlockType)}
-          aria-label={t('staff.blocklist.type')}
-          className="min-h-11 rounded-lg border border-[var(--color-border)] bg-transparent px-3"
-        >
-          <option value="track">{t('staff.blocklist.types.track')}</option>
-          <option value="artist">{t('staff.blocklist.types.artist')}</option>
-          <option value="keyword">{t('staff.blocklist.types.keyword')}</option>
-        </select>
-        <input
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={t('staff.blocklist.value')}
-          aria-label={t('staff.blocklist.value')}
-          className="min-h-11 rounded-lg border border-[var(--color-border)] bg-transparent px-3"
-        />
-        <input
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          placeholder={t('staff.blocklist.reason')}
-          aria-label={t('staff.blocklist.reason')}
-          className="min-h-11 rounded-lg border border-[var(--color-border)] bg-transparent px-3"
-        />
-        <button
-          type="submit"
-          disabled={!value.trim()}
-          className="min-h-11 rounded-lg bg-[var(--color-accent)] font-semibold text-[var(--color-accent-text)] disabled:opacity-50"
-        >
-          {t('staff.blocklist.add')}
-        </button>
-        {errorKey && (
-          <p role="alert" className="text-sm text-[var(--color-danger)]">
-            {t(errorKey, { defaultValue: t('staff.errors.generic') })}
-          </p>
-        )}
-      </form>
-      <ul className="flex flex-col divide-y divide-[var(--color-border)] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-        {rules.map((r) => (
-          <li key={r.id} className="flex items-center justify-between gap-3 p-3">
-            <div className="min-w-0">
-              <p className="truncate font-medium">{r.value}</p>
-              <p className="truncate text-sm text-[var(--color-muted)]">
-                {t(`staff.blocklist.types.${r.type}`)}
-                {r.reason ? ` · ${r.reason}` : ''}
-              </p>
-            </div>
-            <button
-              type="button"
-              className={BUTTON}
-              onClick={() =>
-                void removeBlockRule(r.id).then(() =>
-                  setRules((prev) => prev.filter((x) => x.id !== r.id)),
-                )
-              }
-            >
-              {t('staff.blocklist.remove')}
-            </button>
-          </li>
-        ))}
-        {rules.length === 0 && (
-          <li className="p-3 text-sm text-[var(--color-muted)]">{t('staff.blocklist.empty')}</li>
-        )}
-      </ul>
+      <SectionTitle>{t('staff.blocklist.title')}</SectionTitle>
+      <Card className="p-4">
+        <form onSubmit={onAdd} className="flex flex-col gap-3">
+          <div
+            className="flex gap-1 rounded-xl bg-[var(--color-surface-2)] p-1"
+            role="radiogroup"
+            aria-label={t('staff.blocklist.type')}
+          >
+            {(['track', 'artist', 'keyword'] as const).map((kind) => (
+              <button
+                key={kind}
+                type="button"
+                role="radio"
+                aria-checked={type === kind}
+                onClick={() => setType(kind)}
+                className="min-h-11 flex-1 rounded-lg text-sm font-semibold text-[var(--color-muted)] aria-checked:bg-[var(--color-surface)] aria-checked:text-[var(--color-text)] aria-checked:shadow"
+              >
+                {t(`staff.blocklist.types.${kind}`)}
+              </button>
+            ))}
+          </div>
+          <Field
+            label={t('staff.blocklist.value')}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <Field
+            label={t('staff.blocklist.reason')}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
+          <Button type="submit" disabled={!value.trim()} className="w-full">
+            {t('staff.blocklist.add')}
+          </Button>
+          {errorKey && (
+            <ErrorText>{t(errorKey, { defaultValue: t('staff.errors.generic') })}</ErrorText>
+          )}
+        </form>
+      </Card>
+      {rules.length === 0 && <EmptyState>{t('staff.blocklist.empty')}</EmptyState>}
+      {rules.length > 0 && (
+        <Card className="divide-y divide-[var(--color-border)] overflow-hidden">
+          <ul>
+            {rules.map((r) => (
+              <li key={r.id} className="flex items-center justify-between gap-3 p-4">
+                <div className="min-w-0">
+                  <p className="truncate font-semibold">{r.value}</p>
+                  <p className="truncate text-sm text-[var(--color-muted)]">
+                    {t(`staff.blocklist.types.${r.type}`)}
+                    {r.reason ? ` · ${r.reason}` : ''}
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() =>
+                    void removeBlockRule(r.id).then(() =>
+                      setRules((prev) => prev.filter((x) => x.id !== r.id)),
+                    )
+                  }
+                >
+                  {t('staff.blocklist.remove')}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
     </section>
   );
 }
@@ -283,54 +275,60 @@ function UsersSection() {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">{t('staff.users.title')}</h2>
-      <input
+      <SectionTitle>{t('staff.users.title')}</SectionTitle>
+      <Field
+        label={t('staff.users.search')}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={t('staff.users.search')}
-        aria-label={t('staff.users.search')}
-        className="min-h-12 rounded-xl border border-[var(--color-border)] bg-transparent px-4"
       />
-      <ul className="flex flex-col divide-y divide-[var(--color-border)] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-        {users.map((u) => (
-          <li key={u.id} className="flex flex-col gap-2 p-3">
-            <div>
-              <p className="font-semibold">{u.name}</p>
-              <p className="text-sm text-[var(--color-muted)]">
-                @{u.username} · {t(`staff.users.statuses.${u.status}`, { defaultValue: u.status })}
-              </p>
-              {u.block && (
-                <p className="text-sm text-[var(--color-danger)]">
-                  {t('staff.users.blocked', { reason: u.block.reason ?? '' })}
-                </p>
-              )}
-            </div>
-            {u.block ? (
-              <button type="button" className={BUTTON} onClick={() => void unblock(u)}>
-                {t('staff.users.unblock')}
-              </button>
-            ) : (
-              <div className="flex flex-col gap-2">
-                <input
-                  value={reasonFor[u.id] ?? ''}
-                  onChange={(e) => setReasonFor((prev) => ({ ...prev, [u.id]: e.target.value }))}
-                  placeholder={t('staff.users.reason')}
-                  aria-label={t('staff.users.reason')}
-                  className="min-h-11 rounded-lg border border-[var(--color-border)] bg-transparent px-3"
-                />
-                <div className="flex flex-wrap gap-2">
-                  <button type="button" className={BUTTON} onClick={() => void block(u, 60)}>
-                    {t('staff.users.block1h')}
-                  </button>
-                  <button type="button" className={BUTTON} onClick={() => void block(u)}>
-                    {t('staff.users.blockForever')}
-                  </button>
+      {users.length > 0 && (
+        <Card className="divide-y divide-[var(--color-border)] overflow-hidden">
+          <ul>
+            {users.map((u) => (
+              <li key={u.id} className="flex flex-col gap-3 p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="font-semibold">{u.name}</p>
+                    <p className="text-sm text-[var(--color-muted)]">
+                      @{u.username} ·{' '}
+                      {t(`staff.users.statuses.${u.status}`, { defaultValue: u.status })}
+                    </p>
+                  </div>
+                  {u.block && <Badge tone="danger">{t('staff.users.blockedBadge')}</Badge>}
                 </div>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
+                {u.block ? (
+                  <>
+                    <p className="text-sm text-[var(--color-danger)]">
+                      {t('staff.users.blocked', { reason: u.block.reason ?? '' })}
+                    </p>
+                    <Button size="sm" variant="secondary" onClick={() => void unblock(u)}>
+                      {t('staff.users.unblock')}
+                    </Button>
+                  </>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Field
+                      label={t('staff.users.reason')}
+                      value={reasonFor[u.id] ?? ''}
+                      onChange={(e) =>
+                        setReasonFor((prev) => ({ ...prev, [u.id]: e.target.value }))
+                      }
+                    />
+                    <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="secondary" onClick={() => void block(u, 60)}>
+                        {t('staff.users.block1h')}
+                      </Button>
+                      <Button size="sm" variant="danger" onClick={() => void block(u)}>
+                        {t('staff.users.blockForever')}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
     </section>
   );
 }
@@ -339,27 +337,21 @@ export function StaffPage() {
   const { t } = useTranslation();
   const { state } = useAuth();
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-8 px-4 py-6">
-      <header className="flex items-center justify-between gap-4">
-        <Link
-          to="/"
-          className="min-h-11 inline-flex items-center text-sm font-medium text-[var(--color-accent)]"
-        >
-          ← {t('search.back')}
-        </Link>
+    <>
+      <div className="flex items-end justify-between gap-3">
+        <h1 className="text-3xl font-bold tracking-tight">{t('staff.title')}</h1>
         {state.status === 'authenticated' && state.user.role === 'admin' && (
           <Link
             to="/panel/auditoria"
-            className="min-h-11 inline-flex items-center text-sm font-medium text-[var(--color-accent)]"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--color-accent)]"
           >
-            {t('staff.auditLink')}
+            {t('staff.auditLink')} →
           </Link>
         )}
-      </header>
-      <h1 className="text-2xl font-bold">{t('staff.title')}</h1>
+      </div>
       <QueueSection />
       <BlocklistSection />
       <UsersSection />
-    </main>
+    </>
   );
 }

@@ -31,14 +31,14 @@ export default defineConfig({
     {
       command: `node ${join(here, 'start-api.mjs')}`,
       url: 'http://localhost:3100/health',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
       timeout: 60_000,
     },
     {
       command: 'pnpm --filter @pulsofm/web exec vite preview --port 4173 --strictPort',
       url: 'http://localhost:4173/login',
       env: { API_PROXY_TARGET: 'http://localhost:3100' },
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
       timeout: 60_000,
     },
   ],

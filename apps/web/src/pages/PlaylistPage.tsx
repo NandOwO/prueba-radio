@@ -8,6 +8,7 @@ import {
   renamePlaylist,
   type PlaylistDetail,
 } from '../api/library';
+import { Button, Card, Cover, EmptyState, ErrorText, Field } from '../ui';
 
 export function PlaylistPage() {
   const { t } = useTranslation();
@@ -38,73 +39,67 @@ export function PlaylistPage() {
     setPlaylist((p) => (p ? { ...p, name: trimmed } : p));
   }
 
-  async function remove_playlist() {
+  async function removePlaylist() {
     if (!window.confirm(t('playlist.confirmDelete'))) return;
     await deletePlaylist(id);
     navigate('/biblioteca', { replace: true });
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-4 py-6">
-      <header className="flex items-center justify-between gap-4">
-        <Link
-          to="/biblioteca"
-          className="min-h-11 inline-flex items-center text-sm font-medium text-[var(--color-accent)]"
-        >
-          ← {t('library.title')}
-        </Link>
-      </header>
+    <>
+      <Link
+        to="/biblioteca"
+        className="inline-flex min-h-11 items-center text-sm font-medium text-[var(--color-accent)]"
+      >
+        ← {t('library.title')}
+      </Link>
 
-      {errorKey && (
-        <p role="alert" className="text-sm text-[var(--color-danger)]">
-          {t(errorKey)}
-        </p>
-      )}
+      {errorKey && <ErrorText>{t(errorKey)}</ErrorText>}
 
       {playlist && (
         <>
-          <div className="flex gap-2">
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onBlur={() => void rename()}
-              maxLength={60}
-              aria-label={t('playlist.name')}
-              className="min-h-12 min-w-0 flex-1 rounded-xl border border-[var(--color-border)] bg-transparent px-4 text-xl font-bold"
-            />
-            <button
-              type="button"
-              onClick={() => void remove_playlist()}
-              className="min-h-12 rounded-xl border border-[var(--color-border)] px-4 text-sm font-medium text-[var(--color-danger)]"
-            >
+          <div className="flex items-end gap-2">
+            <div className="min-w-0 flex-1">
+              <Field
+                label={t('playlist.name')}
+                value={name}
+                maxLength={60}
+                onChange={(e) => setName(e.target.value)}
+                onBlur={() => void rename()}
+              />
+            </div>
+            <Button variant="danger" size="sm" onClick={() => void removePlaylist()}>
               {t('playlist.delete')}
-            </button>
+            </Button>
           </div>
 
           {playlist.items.length === 0 ? (
-            <p className="text-sm text-[var(--color-muted)]">{t('playlist.empty')}</p>
+            <EmptyState>{t('playlist.empty')}</EmptyState>
           ) : (
-            <ul className="flex flex-col divide-y divide-[var(--color-border)] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-              {playlist.items.map((item) => (
-                <li key={item.id} className="flex items-center gap-3 p-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{item.title}</p>
-                    <p className="truncate text-sm text-[var(--color-muted)]">{item.artist}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => void remove(item.id)}
-                    aria-label={t('playlist.removeTrack')}
-                    className="min-h-11 min-w-11 rounded-lg text-lg"
-                  >
-                    ✕
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <Card className="divide-y divide-[var(--color-border)] overflow-hidden">
+              <ul>
+                {playlist.items.map((item) => (
+                  <li key={item.id} className="flex items-center gap-3 p-3">
+                    <Cover src={item.coverUrl} title={item.title} size={44} />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-semibold">{item.title}</p>
+                      <p className="truncate text-sm text-[var(--color-muted)]">{item.artist}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => void remove(item.id)}
+                      aria-label={t('playlist.removeTrack')}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-[var(--color-muted)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-danger)]"
+                    >
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </Card>
           )}
         </>
       )}
-    </main>
+    </>
   );
 }

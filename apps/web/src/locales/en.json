@@ -17,7 +17,8 @@
       "ERP_UNAVAILABLE": "We can't verify your account right now. Please try again later.",
       "VALIDATION_ERROR": "Please check your details and try again.",
       "generic": "Something went wrong. Please try again."
-    }
+    },
+    "tagline": "Your gym's radio, in your pocket"
   },
   "home": {
     "greeting": "Hi, {{name}}",
@@ -25,9 +26,16 @@
     "logout": "Sign out",
     "searchLink": "Search songs",
     "requestsLink": "My requests",
-    "queueLink": "View the queue",
+    "queueLink": "Live queue",
     "libraryLink": "My library",
-    "staffLink": "Staff panel"
+    "staffLink": "Staff panel",
+    "subtitle": "What's playing today?",
+    "nothingPlaying": "Nothing is playing. Request the first song!",
+    "searchHint": "Find your song",
+    "libraryHint": "Favorites and playlists",
+    "requestsHint": "Status of your requests",
+    "queueHint": "What's next",
+    "staffSection": "Staff"
   },
   "search": {
     "back": "Home",
@@ -52,7 +60,8 @@
       "USER_REQUESTS_BLOCKED": "Song requests are blocked on your account. Please contact the front desk.",
       "TRACK_NOT_FOUND": "That song is no longer available.",
       "generic": "We couldn't register your request. Please try again."
-    }
+    },
+    "intro": "Search by title or artist and request the song you want to hear."
   },
   "requests": {
     "title": "My requests",
@@ -94,7 +103,8 @@
     "playerError": "The YouTube player couldn't be loaded.",
     "paused": "Paused",
     "idle": "Nothing is playing. Request the first song from your phone.",
-    "upNext": "Up next"
+    "upNext": "Up next",
+    "requestedBy": "Requested by {{name}}"
   },
   "library": {
     "title": "My library",
@@ -182,7 +192,8 @@
         "active": "active",
         "suspended": "suspended",
         "inactive": "inactive"
-      }
+      },
+      "blockedBadge": "Blocked"
     }
   },
   "audit": {
@@ -197,5 +208,14 @@
       "user.block": "Member blocked",
       "user.unblock": "Member unblocked"
     }
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "queue": "Queue",
+    "library": "Library",
+    "requests": "Requests",
+    "panel": "Staff panel",
+    "label": "Main navigation"
   }
 }

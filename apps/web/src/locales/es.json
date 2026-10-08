@@ -17,17 +17,25 @@
       "ERP_UNAVAILABLE": "No podemos verificar tu cuenta ahora. Inténtalo más tarde.",
       "VALIDATION_ERROR": "Revisa los datos e inténtalo de nuevo.",
       "generic": "Algo salió mal. Inténtalo de nuevo."
-    }
+    },
+    "tagline": "La radio de tu gimnasio, en tu bolsillo"
   },
   "home": {
     "greeting": "Hola, {{name}}",
     "comingSoon": "Pronto podrás buscar y pedir canciones desde aquí.",
     "logout": "Salir",
     "searchLink": "Buscar canciones",
-    "requestsLink": "Mis solicitudes",
-    "queueLink": "Ver la cola",
+    "requestsLink": "Mis pedidos",
+    "queueLink": "Cola en vivo",
     "libraryLink": "Mi biblioteca",
-    "staffLink": "Panel de staff"
+    "staffLink": "Panel de staff",
+    "subtitle": "¿Qué suena hoy?",
+    "nothingPlaying": "Nada suena ahora. ¡Pide la primera canción!",
+    "searchHint": "Encuentra tu canción",
+    "libraryHint": "Favoritos y playlists",
+    "requestsHint": "Estado de tus pedidos",
+    "queueHint": "Lo que sigue",
+    "staffSection": "Staff"
   },
   "search": {
     "back": "Inicio",
@@ -52,7 +60,8 @@
       "USER_REQUESTS_BLOCKED": "Tu acceso a solicitar canciones está bloqueado. Contacta a recepción.",
       "TRACK_NOT_FOUND": "Esa canción ya no está disponible.",
       "generic": "No pudimos registrar tu solicitud. Inténtalo de nuevo."
-    }
+    },
+    "intro": "Busca por título o artista y pide la canción que quieres escuchar."
   },
   "requests": {
     "title": "Mis solicitudes",
@@ -94,7 +103,8 @@
     "playerError": "No se pudo cargar el reproductor de YouTube.",
     "paused": "En pausa",
     "idle": "Nada suena ahora. Pide la primera canción desde el móvil.",
-    "upNext": "Siguientes"
+    "upNext": "Siguientes",
+    "requestedBy": "Pedida por {{name}}"
   },
   "library": {
     "title": "Mi biblioteca",
@@ -182,7 +192,8 @@
         "active": "activo",
         "suspended": "suspendido",
         "inactive": "inactivo"
-      }
+      },
+      "blockedBadge": "Bloqueado"
     }
   },
   "audit": {
@@ -197,5 +208,14 @@
       "user.block": "Socio bloqueado",
       "user.unblock": "Socio desbloqueado"
     }
+  },
+  "nav": {
+    "home": "Inicio",
+    "search": "Buscar",
+    "queue": "Cola",
+    "library": "Biblioteca",
+    "requests": "Pedidos",
+    "panel": "Panel de staff",
+    "label": "Navegación principal"
   }
 }

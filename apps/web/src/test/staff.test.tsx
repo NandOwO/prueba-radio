@@ -123,7 +123,7 @@ describe('Panel de staff', () => {
         </MemoryRouter>
       </AuthProvider>,
     );
-    await userEvent.selectOptions(await screen.findByLabelText('Tipo de regla'), 'artist');
+    await userEvent.click(await screen.findByRole('radio', { name: 'Artista' }));
     await userEvent.type(screen.getByLabelText('Canción (ID), artista o palabra'), 'Banda');
     await userEvent.click(screen.getByRole('button', { name: 'Bloquear' }));
 

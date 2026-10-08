@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Badge, Button, Card, Cover, EmptyState, SectionTitle } from '../ui';
 import { SavePanel } from '../components/SavePanel';
-import { Link } from 'react-router-dom';
 import { useQueue, type QueueItem } from '../realtime/useQueue';
 
 function formatDuration(ms: number): string {
@@ -12,23 +12,12 @@ function formatDuration(ms: number): string {
 function Row({ item, label }: { item: QueueItem; label: string }) {
   return (
     <li className="flex items-center gap-3 p-3">
-      <span className="w-8 shrink-0 text-center text-sm font-semibold tabular-nums text-[var(--color-muted)]">
+      <span className="w-8 shrink-0 text-center text-sm font-bold tabular-nums text-[var(--color-muted)]">
         {label}
       </span>
-      {item.track.coverUrl ? (
-        <img
-          src={item.track.coverUrl}
-          alt=""
-          width={44}
-          height={44}
-          loading="lazy"
-          className="size-11 shrink-0 rounded-lg object-cover"
-        />
-      ) : (
-        <div aria-hidden="true" className="size-11 shrink-0 rounded-lg bg-[var(--color-border)]" />
-      )}
+      <Cover src={item.track.coverUrl} title={item.track.title} size={44} />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-base font-semibold">{item.track.title}</p>
+        <p className="truncate font-semibold">{item.track.title}</p>
         <p className="truncate text-sm text-[var(--color-muted)]">
           {item.track.artist} · {item.requestedBy}
         </p>
@@ -46,88 +35,93 @@ export function QueuePage() {
   const [saving, setSaving] = useState(false);
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-4 py-6">
-      <header className="flex items-center justify-between gap-4">
-        <Link
-          to="/"
-          className="min-h-11 inline-flex items-center text-sm font-medium text-[var(--color-accent)]"
-        >
-          ← {t('search.back')}
-        </Link>
-        <h1 className="text-xl font-bold">{t('queue.title')}</h1>
-      </header>
-
-      <p className="text-xs text-[var(--color-muted)]" aria-live="polite">
-        {connected ? t('queue.live') : t('queue.reconnecting')}
-      </p>
+    <>
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t('queue.title')}</h1>
+        </div>
+        <Badge tone={connected ? 'success' : 'muted'}>
+          {connected ? t('queue.live') : t('queue.reconnecting')}
+        </Badge>
+      </div>
 
       {!snapshot && <p className="text-sm text-[var(--color-muted)]">{t('common.loading')}</p>}
 
       {snapshot && (
         <>
-          <section className="flex flex-col gap-2">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-              {t('queue.nowPlaying')}
-            </h2>
+          <section className="flex flex-col gap-3">
+            <SectionTitle>{t('queue.nowPlaying')}</SectionTitle>
             {snapshot.current ? (
-              <>
-                <ul className="overflow-hidden rounded-2xl border border-[var(--color-accent)] bg-[var(--color-surface)]">
-                  <Row item={snapshot.current} label="▶" />
-                </ul>
-                <button
-                  type="button"
-                  onClick={() => setSaving(true)}
-                  className="min-h-12 rounded-xl border border-[var(--color-accent)] px-4 text-base font-semibold text-[var(--color-accent)]"
-                >
-                  {t('queue.save')}
-                </button>
-              </>
+              <Card className="overflow-hidden">
+                <div className="flex items-center gap-4 p-4">
+                  <Cover
+                    src={snapshot.current.track.coverUrl}
+                    title={snapshot.current.track.title}
+                    size={72}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-lg font-bold">{snapshot.current.track.title}</p>
+                    <p className="truncate text-sm text-[var(--color-muted)]">
+                      {snapshot.current.track.artist} · {snapshot.current.requestedBy}
+                    </p>
+                    {snapshot.paused && <Badge tone="accent">{t('display.paused')}</Badge>}
+                  </div>
+                </div>
+                <div className="border-t border-[var(--color-border)] p-3">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => setSaving(true)}
+                  >
+                    {t('queue.save')}
+                  </Button>
+                </div>
+              </Card>
             ) : (
-              <p className="text-sm text-[var(--color-muted)]">{t('queue.nothingPlaying')}</p>
+              <EmptyState>{t('queue.nothingPlaying')}</EmptyState>
             )}
           </section>
 
           {saving && snapshot.current && (
             <SavePanel
               trackId={snapshot.current.track.id}
-
               title={snapshot.current.track.title}
-
               onClose={() => setSaving(false)}
             />
           )}
 
-          <section className="flex flex-col gap-2">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-              {t('queue.upcoming')}
-            </h2>
+          <section className="flex flex-col gap-3">
+            <SectionTitle>{t('queue.upcoming')}</SectionTitle>
             {snapshot.upcoming.length === 0 ? (
-              <p className="text-sm text-[var(--color-muted)]">{t('queue.emptyUpcoming')}</p>
+              <EmptyState>{t('queue.emptyUpcoming')}</EmptyState>
             ) : (
-              <ul className="divide-y divide-[var(--color-border)] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-                {snapshot.upcoming.map((item, index) => (
-                  <Row key={item.id} item={item} label={String(index + 1)} />
-                ))}
-              </ul>
+              <Card className="divide-y divide-[var(--color-border)] overflow-hidden">
+                <ul>
+                  {snapshot.upcoming.map((item, index) => (
+                    <Row key={item.id} item={item} label={String(index + 1)} />
+                  ))}
+                </ul>
+              </Card>
             )}
           </section>
 
-          <section className="flex flex-col gap-2">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-              {t('queue.previous')}
-            </h2>
+          <section className="flex flex-col gap-3">
+            <SectionTitle>{t('queue.previous')}</SectionTitle>
             {snapshot.previous.length === 0 ? (
-              <p className="text-sm text-[var(--color-muted)]">{t('queue.emptyPrevious')}</p>
+              <EmptyState>{t('queue.emptyPrevious')}</EmptyState>
             ) : (
-              <ul className="divide-y divide-[var(--color-border)] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] opacity-80">
-                {snapshot.previous.map((item, index) => (
-                  <Row key={item.id} item={item} label={`−${index + 1}`} />
-                ))}
-              </ul>
+              <Card className="divide-y divide-[var(--color-border)] overflow-hidden opacity-75">
+                <ul>
+                  {snapshot.previous.map((item, index) => (
+                    <Row key={item.id} item={item} label={`−${index + 1}`} />
+                  ))}
+                </ul>
+              </Card>
             )}
           </section>
         </>
       )}
-    </main>
+    </>
   );
 }

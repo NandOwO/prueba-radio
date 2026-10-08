@@ -13,6 +13,9 @@ const env = {
   ERP_SYNC_ENABLED: 'false',
   DISPLAY_MEMBER_IDS: 'DISPLAY-01',
   STAFF_MEMBER_IDS: 'M-10601',
+  // Fijados aquí para no heredar roles ni ERP del entorno de quien ejecuta las pruebas.
+  ADMIN_MEMBER_IDS: '',
+  ERP_MODE: 'fake',
   PORT: '3100',
 };
 

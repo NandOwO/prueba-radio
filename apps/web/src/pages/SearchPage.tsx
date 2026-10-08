@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { ApiRequestError } from '../api/client';
 import { createRequest } from '../api/requests';
 import { searchTracks, type TrackWithId } from '../api/tracks';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { Button, Cover, EmptyState, ErrorText, Badge } from '../ui';
 
 const MIN_QUERY = 2;
 
 function formatDuration(ms: number): string {
   const total = Math.round(ms / 1000);
-  const minutes = Math.floor(total / 60);
-  const seconds = String(total % 60).padStart(2, '0');
-  return `${minutes}:${seconds}`;
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
 }
 
 export function SearchPage() {
@@ -71,19 +69,26 @@ export function SearchPage() {
   }, [debounced]);
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-4 py-6">
-      <header className="flex items-center justify-between gap-4">
-        <Link
-          to="/"
-          className="min-h-11 inline-flex items-center text-sm font-medium text-[var(--color-accent)]"
-        >
-          ← {t('search.back')}
-        </Link>
-        <h1 className="text-xl font-bold">{t('search.title')}</h1>
-      </header>
+    <>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">{t('search.title')}</h1>
+        <p className="mt-1 text-sm text-[var(--color-muted)]">{t('search.intro')}</p>
+      </div>
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium">
-        {t('search.label')}
+      <label className="relative block">
+        <span className="sr-only">{t('search.label')}</span>
+        <svg
+          aria-hidden="true"
+          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-muted)]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" />
+        </svg>
         <input
           type="search"
           name="q"
@@ -93,72 +98,53 @@ export function SearchPage() {
           spellCheck={false}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="min-h-12 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 text-base outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+          className="min-h-14 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] pl-12 pr-4 text-base outline-none transition focus:border-[var(--color-accent)]"
         />
       </label>
 
       {query.trim().length > 0 && query.trim().length < MIN_QUERY && (
-        <p className="text-sm text-[var(--color-muted)]">
+        <p className="-mt-3 text-sm text-[var(--color-muted)]">
           {t('search.tooShort', { min: MIN_QUERY })}
         </p>
       )}
       {loading && <p className="text-sm text-[var(--color-muted)]">{t('search.loading')}</p>}
-      {requestError && (
-        <p role="alert" className="text-sm text-[var(--color-danger)]">
-          {requestError}
-        </p>
-      )}
+      {requestError && <ErrorText>{requestError}</ErrorText>}
       {errorKey && (
-        <p role="alert" className="text-sm text-[var(--color-danger)]">
-          {t(errorKey, { defaultValue: t('search.errors.generic') })}
-        </p>
+        <ErrorText>{t(errorKey, { defaultValue: t('search.errors.generic') })}</ErrorText>
       )}
       {!loading && !errorKey && debounced.length >= MIN_QUERY && results.length === 0 && (
-        <p className="text-sm text-[var(--color-muted)]">{t('search.empty')}</p>
+        <EmptyState>{t('search.empty')}</EmptyState>
       )}
 
-      <ul className="flex flex-col divide-y divide-[var(--color-border)] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-        {results.map((track) => (
-          <li key={track.id} className="flex items-center gap-3 p-3">
-            {track.coverUrl ? (
-              <img
-                src={track.coverUrl}
-                alt=""
-                width={48}
-                height={48}
-                loading="lazy"
-                className="size-12 shrink-0 rounded-lg object-cover"
-              />
-            ) : (
-              <div
-                aria-hidden="true"
-                className="size-12 shrink-0 rounded-lg bg-[var(--color-border)]"
-              />
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-base font-semibold">{track.title}</p>
-              <p className="truncate text-sm text-[var(--color-muted)]">{track.artist}</p>
-            </div>
-            <span className="shrink-0 text-sm tabular-nums text-[var(--color-muted)]">
-              {formatDuration(track.durationMs)}
-            </span>
-            {requested[track.id] ? (
-              <span className="shrink-0 rounded-lg bg-[var(--color-accent)] px-3 py-2 text-sm font-semibold text-[var(--color-accent-text)]">
-                #{requested[track.id]}
-              </span>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void onRequest(track)}
-                disabled={requesting !== null}
-                className="min-h-11 shrink-0 rounded-lg bg-[var(--color-accent)] px-3 text-sm font-semibold text-[var(--color-accent-text)] disabled:opacity-50"
-              >
-                {requesting === track.id ? t('search.requesting') : t('search.request')}
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
-    </main>
+      {results.length > 0 && (
+        <ul className="flex flex-col gap-2">
+          {results.map((track) => (
+            <li
+              key={track.id}
+              className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-card)]"
+            >
+              <Cover src={track.coverUrl} title={track.title} size={52} />
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold">{track.title}</p>
+                <p className="truncate text-sm text-[var(--color-muted)]">
+                  {track.artist} · {formatDuration(track.durationMs)}
+                </p>
+              </div>
+              {requested[track.id] ? (
+                <Badge tone="success">#{requested[track.id]}</Badge>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => void onRequest(track)}
+                  disabled={requesting !== null}
+                >
+                  {requesting === track.id ? t('search.requesting') : t('search.request')}
+                </Button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   );
 }
