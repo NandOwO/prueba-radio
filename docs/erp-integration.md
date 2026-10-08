@@ -332,3 +332,27 @@ En desarrollo, un `GymErpAdapter` de prueba responde con socios ficticios desde 
 - Tipo de acceso disponible: API REST, base de datos de solo lectura, exportaciones programadas u OIDC.
 - Si el ERP guarda contraseñas en texto plano, en hash o no las expone (en ese caso el login delegado será la única opción).
 - Quién genera la API key y el secreto HMAC, y cómo se rotan.
+
+---
+
+## 9. Implementación en PulsoFM (Fase 7)
+
+| Pieza                      | Dónde                                               | Notas                                                                                                        |
+| -------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Webhook firmado            | `POST /integrations/erp/members`                    | Firma HMAC-SHA256, ventana de 5 min, ignora eventos viejos, revoca sesiones si el socio deja de estar activo |
+| Adaptador GymERP           | `apps/api/src/erp/gymerp.adapter.ts`                | Valida cada respuesta con Zod; si el ERP cambia de forma, falla                                              |
+| Sincronización de respaldo | `apps/api/src/integrations/members-sync.service.ts` | Cada 15 min; el punto de sincronización solo avanza si se leyeron todas las páginas                          |
+| Disparo manual             | `POST /admin/erp/sync`                              | Solo administradores; queda en auditoría                                                                     |
+| Login y renovación         | `apps/api/src/auth/auth.service.ts`                 | Si el ERP no responde: `503 ERP_UNAVAILABLE`                                                                 |
+
+**Variables de entorno**
+
+| Variable             | Valor por defecto | Para qué                                                           |
+| -------------------- | ----------------- | ------------------------------------------------------------------ |
+| `ERP_MODE`           | `fake`            | `gymerp` activa el adaptador HTTP                                  |
+| `ERP_BASE_URL`       | —                 | Base del contrato, por ejemplo `https://erp.gimnasio.local/api/v1` |
+| `ERP_API_KEY`        | —                 | Enviada en `X-Api-Key`                                             |
+| `ERP_WEBHOOK_SECRET` | —                 | Secreto HMAC del webhook (mínimo 16 caracteres)                    |
+| `ERP_SYNC_ENABLED`   | `true`            | `false` desactiva la sincronización cada 15 min                    |
+
+Pendiente: ajustar `GymErpAdapter` cuando se conozca el ERP real (nombres de endpoints, campos y tipo de acceso, sección 8).
