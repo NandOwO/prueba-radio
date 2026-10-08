@@ -17,9 +17,18 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/auth': apiTarget,
-      '/staff': apiTarget,
-      '/health': apiTarget,
+      ...Object.fromEntries(
+        ['/auth', '/tracks', '/requests', '/queue', '/staff', '/health'].map((path) => [
+          path,
+          {
+            target: apiTarget,
+            // Una navegación del navegador (HTML) a una ruta de la app, como /queue, se sirve con la web
+            // y no con el API. Las llamadas de datos (JSON) sí van al API.
+            bypass: (req: { headers: { accept?: string } }) =>
+              req.headers.accept?.includes('text/html') ? '/index.html' : undefined,
+          },
+        ]),
+      ),
       '/socket.io': { target: apiTarget, ws: true },
     },
   },
