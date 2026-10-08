@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { DisplayPage } from './pages/DisplayPage';
 import { QueuePage } from './pages/QueuePage';
 import { RequestsPage } from './pages/RequestsPage';
 import { SearchPage } from './pages/SearchPage';
@@ -52,6 +53,14 @@ export function App() {
             element={
               <Protected>
                 <QueuePage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/display"
+            element={
+              <Protected>
+                <DisplayPage />
               </Protected>
             }
           />

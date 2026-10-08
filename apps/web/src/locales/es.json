@@ -82,5 +82,15 @@
     "emptyUpcoming": "La cola está vacía. ¡Pide la primera canción!",
     "previous": "Anteriores",
     "emptyPrevious": "Todavía no ha sonado nada."
+  },
+  "display": {
+    "online": "Conectada",
+    "offline": "Sin conexión",
+    "start": "Iniciar radio",
+    "loadingPlayer": "Cargando reproductor…",
+    "playerError": "No se pudo cargar el reproductor de YouTube.",
+    "paused": "En pausa",
+    "idle": "Nada suena ahora. Pide la primera canción desde el móvil.",
+    "upNext": "Siguientes"
   }
 }

@@ -82,5 +82,15 @@
     "emptyUpcoming": "The queue is empty. Request the first song!",
     "previous": "Previously",
     "emptyPrevious": "Nothing has played yet."
+  },
+  "display": {
+    "online": "Connected",
+    "offline": "Offline",
+    "start": "Start radio",
+    "loadingPlayer": "Loading player…",
+    "playerError": "The YouTube player couldn't be loaded.",
+    "paused": "Paused",
+    "idle": "Nothing is playing. Request the first song from your phone.",
+    "upNext": "Up next"
   }
 }

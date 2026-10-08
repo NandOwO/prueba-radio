@@ -6,7 +6,14 @@ export interface QueueItem {
   id: string;
   status: string;
   position: number;
-  track: { id: string; title: string; artist: string; durationMs: number; coverUrl: string | null };
+  track: {
+    id: string;
+    providerTrackId: string;
+    title: string;
+    artist: string;
+    durationMs: number;
+    coverUrl: string | null;
+  };
   requestedBy: string;
 }
 
@@ -14,6 +21,7 @@ export interface QueueSnapshot {
   previous: QueueItem[];
   current: QueueItem | null;
   upcoming: QueueItem[];
+  paused: boolean;
 }
 
 export interface QueueState {
