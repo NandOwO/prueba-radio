@@ -28,7 +28,7 @@ export class AuthService {
 
   /** Login con las credenciales del ERP. PulsoFM nunca guarda la contraseña. */
   async login(username: string, password: string): Promise<AuthResult> {
-    const member = await this.erp.validateCredentials(username, password);
+    const member = await this.callErp(() => this.erp.validateCredentials(username, password));
     if (!member) {
       throw new ApiError(
         HttpStatus.UNAUTHORIZED,
@@ -68,7 +68,7 @@ export class AuthService {
       );
     }
 
-    const member = await this.erp.getMember(session.user.externalId);
+    const member = await this.callErp(() => this.erp.getMember(session.user.externalId));
     if (!member || member.status !== 'active') {
       await this.prisma.session.update({
         where: { id: session.id },
@@ -98,6 +98,19 @@ export class AuthService {
       where: { refreshTokenHash: hashToken(refreshToken), revokedAt: null },
       data: { revokedAt: new Date() },
     });
+  }
+
+  /** Si el ERP no responde, se falla cerrado: nunca se entra ni se renueva con datos viejos. */
+  private async callErp<T>(call: () => Promise<T>): Promise<T> {
+    try {
+      return await call();
+    } catch {
+      throw new ApiError(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        'ERP_UNAVAILABLE',
+        'No podemos verificar tu cuenta ahora. Inténtalo más tarde.',
+      );
+    }
   }
 
   private assertActive(member: Member): void {

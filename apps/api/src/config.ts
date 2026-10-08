@@ -9,6 +9,7 @@ export interface AppConfig {
   requestLimit: { windowMinutes: number; maxInWindow: number; cooldownMinutes: number };
   /** Roles asignados por ID de socio del ERP. Provisional hasta el panel de administración (Fase 6). */
   roleOverrides: Record<string, 'display' | 'staff' | 'admin'>;
+  erpWebhookSecret: string | undefined;
 }
 
 /** Lee la configuración del entorno. Falla al arrancar si falta el secreto JWT en producción. */
@@ -28,6 +29,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     youtubeDailyQuota: Number(env.YOUTUBE_DAILY_QUOTA ?? 9000),
     searchCacheHours: Number(env.SEARCH_CACHE_HOURS ?? 24),
     roleOverrides: parseRoleOverrides(env),
+    erpWebhookSecret: env.ERP_WEBHOOK_SECRET || undefined,
     requestLimit: {
       windowMinutes: Number(env.REQUEST_WINDOW_MINUTES ?? 30),
       maxInWindow: Number(env.REQUEST_MAX_IN_WINDOW ?? 5),

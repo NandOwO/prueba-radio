@@ -15,6 +15,7 @@ model User {
   role         String    @default("member")
   status       String    @default("active")
   lastSyncedAt DateTime  @default(now())
+  erpUpdatedAt DateTime?
   createdAt    DateTime  @default(now())
   sessions     Session[]
   requests     Request[]
@@ -167,4 +168,12 @@ model AuditLog {
 
   @@index([createdAt])
   @@map("audit_log")
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
 }
