@@ -12,7 +12,8 @@
     "test": "prisma migrate deploy && vitest run",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "start:prod": "prisma migrate deploy && node dist/main.js"
   },
   "dependencies": {
     "@fastify/cookie": "^11.1.2",
@@ -26,6 +27,7 @@
     "@prisma/client": "6.19.3",
     "@pulsofm/shared": "workspace:*",
     "fastify": "^5.11.3",
+    "prisma": "^6.19.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "socket.io": "^4.8.4",
@@ -36,7 +38,6 @@
     "@swc/core": "^1.16.13",
     "@types/node": "^22.20.5",
     "@types/supertest": "^7.2.1",
-    "prisma": "^6.19.3",
     "socket.io-client": "^4.8.4",
     "supertest": "^7.3.1",
     "unplugin-swc": "^2.0.0"
