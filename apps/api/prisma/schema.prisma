@@ -19,6 +19,8 @@ model User {
   sessions     Session[]
   requests     Request[]
   userBlocks   UserBlock[]
+  playlists    Playlist[]
+  favorites    Favorite[]
 
   @@map("users")
 }
@@ -46,6 +48,8 @@ model Track {
   coverUrl        String?
   cachedAt        DateTime @default(now())
   requests        Request[]
+  playlistItems   PlaylistItem[]
+  favorites       Favorite[]
 
   @@unique([provider, providerTrackId])
   @@map("tracks")
@@ -115,4 +119,39 @@ model PlaybackState {
   updatedAt DateTime @updatedAt
 
   @@map("playback_state")
+}
+
+model Playlist {
+  id        String         @id @default(cuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime       @default(now())
+  items     PlaylistItem[]
+
+  @@index([userId])
+  @@map("playlists")
+}
+
+model PlaylistItem {
+  playlistId String
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  trackId    String
+  track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  position   Int
+  addedAt    DateTime @default(now())
+
+  @@id([playlistId, trackId])
+  @@map("playlist_items")
+}
+
+model Favorite {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackId   String
+  track     Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, trackId])
+  @@map("favorites")
 }
