@@ -1,4 +1,10 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Req, UseGuards } from '@nestjs/common';
+import type { FastifyRequest } from 'fastify';
+import { AuditService } from '../audit/audit.service';
+import { CurrentUser } from '../auth/current-user';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../common/roles.decorator';
 import { z } from 'zod';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { ErpSignatureGuard } from './erp-signature.guard';
@@ -17,7 +23,10 @@ const memberEventSchema = z.object({
 
 @Controller('integrations/erp')
 export class ErpIntegrationsController {
-  constructor(private readonly sync: MembersSyncService) {}
+  constructor(
+    private readonly sync: MembersSyncService,
+    private readonly audit: AuditService,
+  ) {}
 
   @Post('members')
   @HttpCode(200)
@@ -33,5 +42,29 @@ export class ErpIntegrationsController {
       updatedAt: body.member.updatedAt,
     });
     return { outcome };
+  }
+}
+
+/** Disparo manual de la sincronización (administradores). */
+@Controller('admin/erp')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
+export class ErpAdminController {
+  constructor(
+    private readonly sync: MembersSyncService,
+    private readonly audit: AuditService,
+  ) {}
+
+  @Post('sync')
+  @HttpCode(200)
+  async syncNow(@Req() req: FastifyRequest & { user: CurrentUser }) {
+    const report = await this.sync.syncFromErp();
+    await this.audit.record({
+      actorId: req.user.id,
+      action: 'erp.sync',
+      entity: 'erp',
+      payload: { ...report },
+    });
+    return report;
   }
 }

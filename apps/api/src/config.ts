@@ -10,6 +10,10 @@ export interface AppConfig {
   /** Roles asignados por ID de socio del ERP. Provisional hasta el panel de administración (Fase 6). */
   roleOverrides: Record<string, 'display' | 'staff' | 'admin'>;
   erpWebhookSecret: string | undefined;
+  erpMode: 'fake' | 'gymerp';
+  erpBaseUrl: string | undefined;
+  erpApiKey: string | undefined;
+  erpSyncEnabled: boolean;
 }
 
 /** Lee la configuración del entorno. Falla al arrancar si falta el secreto JWT en producción. */
@@ -30,6 +34,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     searchCacheHours: Number(env.SEARCH_CACHE_HOURS ?? 24),
     roleOverrides: parseRoleOverrides(env),
     erpWebhookSecret: env.ERP_WEBHOOK_SECRET || undefined,
+    erpMode: env.ERP_MODE === 'gymerp' ? 'gymerp' : 'fake',
+    erpBaseUrl: env.ERP_BASE_URL || undefined,
+    erpApiKey: env.ERP_API_KEY || undefined,
+    erpSyncEnabled: env.ERP_SYNC_ENABLED !== 'false',
     requestLimit: {
       windowMinutes: Number(env.REQUEST_WINDOW_MINUTES ?? 30),
       maxInWindow: Number(env.REQUEST_MAX_IN_WINDOW ?? 5),

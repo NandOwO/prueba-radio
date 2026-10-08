@@ -12,6 +12,7 @@ export default defineConfig({
       NODE_ENV: 'test',
       JWT_SECRET: 'test-secret-with-16-chars-or-more',
       ERP_WEBHOOK_SECRET: 'test-secret-with-16-chars-or-more',
+      ERP_SYNC_ENABLED: 'false',
       DISPLAY_MEMBER_IDS: 'DISPLAY-01',
       STAFF_MEMBER_IDS: 'M-10601',
     },
