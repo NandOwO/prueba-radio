@@ -21,6 +21,14 @@ export function HomePage() {
       </header>
       <p className="text-xl font-semibold">{t('home.greeting', { name: state.user.name })}</p>
       <nav className="flex flex-col gap-3">
+        {['staff', 'admin'].includes(state.user.role) && (
+          <Link
+            to="/staff"
+            className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-accent)] px-4 text-base font-semibold text-[var(--color-accent)]"
+          >
+            {t('home.staffLink')}
+          </Link>
+        )}
         <Link
           to="/search"
           className="flex min-h-12 items-center justify-center rounded-xl bg-[var(--color-accent)] px-4 text-base font-semibold text-[var(--color-accent-text)]"

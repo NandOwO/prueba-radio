@@ -26,7 +26,8 @@
     "searchLink": "Search songs",
     "requestsLink": "My requests",
     "queueLink": "View the queue",
-    "libraryLink": "My library"
+    "libraryLink": "My library",
+    "staffLink": "Staff panel"
   },
   "search": {
     "back": "Home",
@@ -130,6 +131,71 @@
       "generic": "We couldn't save it. Please try again.",
       "TRACK_NOT_FOUND": "That song is no longer available.",
       "PLAYLIST_LIMIT": "You've reached the limit of 20 playlists."
+    }
+  },
+  "staff": {
+    "title": "Staff panel",
+    "auditLink": "Audit log",
+    "requestedBy": "requested by {{name}}",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "REQUEST_NOT_QUEUED": "That song is no longer waiting in the queue."
+    },
+    "queue": {
+      "title": "Queue",
+      "skip": "Skip",
+      "pause": "Pause",
+      "resume": "Resume",
+      "playing": "Playing",
+      "up": "Move up",
+      "down": "Move down",
+      "remove": "Remove",
+      "empty": "No songs waiting."
+    },
+    "blocklist": {
+      "title": "Blocklist",
+      "type": "Rule type",
+      "value": "Song (ID), artist or keyword",
+      "reason": "Reason (optional)",
+      "add": "Block",
+      "remove": "Remove",
+      "empty": "No rules.",
+      "types": {
+        "track": "Song",
+        "artist": "Artist",
+        "keyword": "Keyword"
+      },
+      "errors": {
+        "BLOCK_EXISTS": "That rule already exists.",
+        "generic": "We couldn't save the rule."
+      }
+    },
+    "users": {
+      "title": "Members",
+      "search": "Search by name or username",
+      "reason": "Block reason (min. 3 characters)",
+      "block1h": "Block 1 h",
+      "blockForever": "Block forever",
+      "unblock": "Unblock",
+      "blocked": "Blocked: {{reason}}",
+      "statuses": {
+        "active": "active",
+        "suspended": "suspended",
+        "inactive": "inactive"
+      }
+    }
+  },
+  "audit": {
+    "title": "Audit log",
+    "empty": "No actions recorded yet.",
+    "actions": {
+      "queue.skip": "Song skipped",
+      "request.remove": "Request removed from queue",
+      "queue.move": "Song reordered",
+      "blocklist.add": "Block rule added",
+      "blocklist.remove": "Block rule removed",
+      "user.block": "Member blocked",
+      "user.unblock": "Member unblocked"
     }
   }
 }

@@ -26,7 +26,8 @@
     "searchLink": "Buscar canciones",
     "requestsLink": "Mis solicitudes",
     "queueLink": "Ver la cola",
-    "libraryLink": "Mi biblioteca"
+    "libraryLink": "Mi biblioteca",
+    "staffLink": "Panel de staff"
   },
   "search": {
     "back": "Inicio",
@@ -130,6 +131,71 @@
       "generic": "No pudimos guardar. Inténtalo de nuevo.",
       "TRACK_NOT_FOUND": "Esa canción ya no está disponible.",
       "PLAYLIST_LIMIT": "Llegaste al máximo de playlists (20)."
+    }
+  },
+  "staff": {
+    "title": "Panel de staff",
+    "auditLink": "Auditoría",
+    "requestedBy": "pedida por {{name}}",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "REQUEST_NOT_QUEUED": "Esa canción ya no está en la lista de espera."
+    },
+    "queue": {
+      "title": "Cola",
+      "skip": "Saltar",
+      "pause": "Pausar",
+      "resume": "Reanudar",
+      "playing": "Sonando",
+      "up": "Subir",
+      "down": "Bajar",
+      "remove": "Quitar",
+      "empty": "No hay canciones en espera."
+    },
+    "blocklist": {
+      "title": "Blocklist",
+      "type": "Tipo de regla",
+      "value": "Canción (ID), artista o palabra",
+      "reason": "Motivo (opcional)",
+      "add": "Bloquear",
+      "remove": "Quitar",
+      "empty": "No hay reglas.",
+      "types": {
+        "track": "Canción",
+        "artist": "Artista",
+        "keyword": "Palabra clave"
+      },
+      "errors": {
+        "BLOCK_EXISTS": "Esa regla ya existe.",
+        "generic": "No pudimos guardar la regla."
+      }
+    },
+    "users": {
+      "title": "Socios",
+      "search": "Buscar por nombre o usuario",
+      "reason": "Motivo del bloqueo (mín. 3 letras)",
+      "block1h": "Bloquear 1 h",
+      "blockForever": "Bloquear siempre",
+      "unblock": "Desbloquear",
+      "blocked": "Bloqueado: {{reason}}",
+      "statuses": {
+        "active": "activo",
+        "suspended": "suspendido",
+        "inactive": "inactivo"
+      }
+    }
+  },
+  "audit": {
+    "title": "Auditoría",
+    "empty": "Aún no hay acciones registradas.",
+    "actions": {
+      "queue.skip": "Canción saltada",
+      "request.remove": "Solicitud quitada de la cola",
+      "queue.move": "Canción reordenada",
+      "blocklist.add": "Regla de bloqueo añadida",
+      "blocklist.remove": "Regla de bloqueo quitada",
+      "user.block": "Socio bloqueado",
+      "user.unblock": "Socio desbloqueado"
     }
   }
 }

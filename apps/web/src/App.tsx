@@ -1,7 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { HomePage } from './pages/HomePage';
+import { AuditPage } from './pages/AuditPage';
 import { LibraryPage } from './pages/LibraryPage';
+import { StaffPage } from './pages/StaffPage';
+import { RequireRole } from './components/RequireRole';
 import { LoginPage } from './pages/LoginPage';
 import { PlaylistPage } from './pages/PlaylistPage';
 import { DisplayPage } from './pages/DisplayPage';
@@ -79,6 +82,26 @@ export function App() {
             element={
               <Protected>
                 <PlaylistPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/staff"
+            element={
+              <Protected>
+                <RequireRole roles={['staff', 'admin']}>
+                  <StaffPage />
+                </RequireRole>
+              </Protected>
+            }
+          />
+          <Route
+            path="/staff/audit"
+            element={
+              <Protected>
+                <RequireRole roles={['admin']}>
+                  <AuditPage />
+                </RequireRole>
               </Protected>
             }
           />
