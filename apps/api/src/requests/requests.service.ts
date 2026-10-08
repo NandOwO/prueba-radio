@@ -84,6 +84,7 @@ export class RequestsService {
       const request = await tx.request.create({
         data: { userId, trackId, position: (last._max.position ?? 0) + 1, status: 'queued' },
       });
+      await this.queue.ensurePlaying(tx as unknown as PrismaService);
 
       return {
         blocked: false as const,

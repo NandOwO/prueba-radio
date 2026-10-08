@@ -116,18 +116,17 @@ describe('Tiempo real de la cola', () => {
     const socket = connect({ token });
     await nextEvent(socket, 'queue:updated');
 
-    const update = nextEvent<{ upcoming: { track: { title: string } }[] }>(
-      socket,
-      'queue:updated',
-      (p) => p.upcoming.length === 1,
-    );
+    const update = nextEvent<{
+      current: { track: { title: string } } | null;
+      upcoming: { track: { title: string } }[];
+    }>(socket, 'queue:updated', (p) => p.current !== null || p.upcoming.length > 0);
     await request(app.getHttpServer())
       .post('/requests')
       .set('Authorization', `Bearer ${token}`)
       .send({ trackId: track.id });
 
     const payload = await update;
-    expect(payload.upcoming[0]?.track.title).toBe('En vivo');
+    expect((payload.current ?? payload.upcoming[0])?.track.title).toBe('En vivo');
   });
 
   it('avisa cuando la canción actual cambia', async () => {

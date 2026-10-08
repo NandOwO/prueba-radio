@@ -35,6 +35,20 @@ export class QueueService {
     private readonly playback: PlaybackService,
   ) {}
 
+  /** Si no hay canción sonando, pone la primera de la cola en reproducción. */
+  async ensurePlaying(tx: Pick<PrismaService, 'request'> = this.prisma): Promise<void> {
+    const playing = await tx.request.findFirst({
+      where: { status: 'playing' },
+      select: { id: true },
+    });
+    if (playing) return;
+    const next = await tx.request.findFirst({
+      where: { status: 'queued' },
+      orderBy: { position: 'asc' },
+    });
+    if (next) await tx.request.update({ where: { id: next.id }, data: { status: 'playing' } });
+  }
+
   notifyChanged(): void {
     this.changes.emit('changed');
   }

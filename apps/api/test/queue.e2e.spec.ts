@@ -142,3 +142,60 @@ describe('Cola de reproducción', () => {
     );
   });
 });
+
+describe('Arranque automático de la reproducción', () => {
+  let app: NestFastifyApplication;
+  let prisma: PrismaService;
+  let token: string;
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
+      .overrideProvider(MEMBER_PROVIDER)
+      .useValue(new FakeErpAdapter())
+      .overrideProvider(MUSIC_PROVIDER)
+      .useValue(new NoopMusicProvider())
+      .compile();
+    app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
+    await app.register(cookie);
+    await app.init();
+    await app.getHttpAdapter().getInstance().ready();
+    prisma = app.get(PrismaService);
+  });
+
+  beforeEach(async () => {
+    await prisma.request.deleteMany();
+    await prisma.track.deleteMany();
+    await prisma.session.deleteMany();
+    await prisma.user.deleteMany();
+    const login = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ username: 'maria.lopez', password: 'gym-1234' });
+    token = login.body.accessToken;
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('la primera canción pedida empieza a sonar de inmediato', async () => {
+    const track = await prisma.track.create({
+      data: {
+        provider: 'youtube',
+        providerTrackId: 'first',
+        title: 'Primera',
+        artist: 'A',
+        durationMs: 1000,
+      },
+    });
+    await request(app.getHttpServer())
+      .post('/requests')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ trackId: track.id });
+
+    const res = await request(app.getHttpServer())
+      .get('/queue')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.body.current?.track.title).toBe('Primera');
+    expect(res.body.upcoming).toEqual([]);
+  });
+});
