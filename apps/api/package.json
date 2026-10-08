@@ -4,7 +4,7 @@
   "private": true,
   "main": "dist/main.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "prisma generate && tsc -p tsconfig.build.json",
     "start": "node dist/main.js",
     "dev": "tsc -p tsconfig.build.json --watch",
     "lint": "eslint .",
