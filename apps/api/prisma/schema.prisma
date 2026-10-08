@@ -85,7 +85,9 @@ model Request {
   playedAt  DateTime?
 
   @@index([status, position])
+  @@index([status, playedAt])
   @@index([userId, createdAt])
+  @@index([trackId])
   @@map("requests")
 }
 
@@ -143,6 +145,7 @@ model PlaylistItem {
   addedAt    DateTime @default(now())
 
   @@id([playlistId, trackId])
+  @@index([trackId])
   @@map("playlist_items")
 }
 
@@ -154,6 +157,7 @@ model Favorite {
   createdAt DateTime @default(now())
 
   @@id([userId, trackId])
+  @@index([trackId])
   @@map("favorites")
 }
 
