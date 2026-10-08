@@ -34,6 +34,12 @@ export function HomePage() {
           {t('home.queueLink')}
         </Link>
         <Link
+          to="/library"
+          className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 text-base font-semibold"
+        >
+          {t('home.libraryLink')}
+        </Link>
+        <Link
           to="/requests"
           className="flex min-h-12 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 text-base font-semibold"
         >

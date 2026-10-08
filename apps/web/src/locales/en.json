@@ -25,7 +25,8 @@
     "logout": "Sign out",
     "searchLink": "Search songs",
     "requestsLink": "My requests",
-    "queueLink": "View the queue"
+    "queueLink": "View the queue",
+    "libraryLink": "My library"
   },
   "search": {
     "back": "Home",
@@ -81,7 +82,8 @@
     "upcoming": "Up next",
     "emptyUpcoming": "The queue is empty. Request the first song!",
     "previous": "Previously",
-    "emptyPrevious": "Nothing has played yet."
+    "emptyPrevious": "Nothing has played yet.",
+    "save": "Save song"
   },
   "display": {
     "online": "Connected",
@@ -92,5 +94,42 @@
     "paused": "Paused",
     "idle": "Nothing is playing. Request the first song from your phone.",
     "upNext": "Up next"
+  },
+  "library": {
+    "title": "My library",
+    "playlists": "Playlists",
+    "favorites": "Favorites",
+    "newPlaylist": "New playlist",
+    "create": "Create",
+    "trackCount": "{{count}} songs",
+    "noPlaylists": "You don't have any playlists yet.",
+    "noFavorites": "You don't have any favorites yet.",
+    "removeFavorite": "Remove from favorites",
+    "errors": {
+      "generic": "We couldn't load your library.",
+      "playlistLimit": "You've reached the limit of 20 playlists."
+    }
+  },
+  "playlist": {
+    "name": "Playlist name",
+    "delete": "Delete",
+    "confirmDelete": "Delete this playlist?",
+    "empty": "This playlist is empty. Save songs from the queue.",
+    "removeTrack": "Remove song",
+    "errors": {
+      "notFound": "That playlist doesn't exist."
+    }
+  },
+  "save": {
+    "title": "Save song",
+    "favorite": "Favorites",
+    "newPlaylist": "New playlist",
+    "create": "Create",
+    "close": "Close",
+    "errors": {
+      "generic": "We couldn't save it. Please try again.",
+      "TRACK_NOT_FOUND": "That song is no longer available.",
+      "PLAYLIST_LIMIT": "You've reached the limit of 20 playlists."
+    }
   }
 }

@@ -25,7 +25,8 @@
     "logout": "Salir",
     "searchLink": "Buscar canciones",
     "requestsLink": "Mis solicitudes",
-    "queueLink": "Ver la cola"
+    "queueLink": "Ver la cola",
+    "libraryLink": "Mi biblioteca"
   },
   "search": {
     "back": "Inicio",
@@ -81,7 +82,8 @@
     "upcoming": "Siguientes",
     "emptyUpcoming": "La cola está vacía. ¡Pide la primera canción!",
     "previous": "Anteriores",
-    "emptyPrevious": "Todavía no ha sonado nada."
+    "emptyPrevious": "Todavía no ha sonado nada.",
+    "save": "Guardar canción"
   },
   "display": {
     "online": "Conectada",
@@ -92,5 +94,42 @@
     "paused": "En pausa",
     "idle": "Nada suena ahora. Pide la primera canción desde el móvil.",
     "upNext": "Siguientes"
+  },
+  "library": {
+    "title": "Mi biblioteca",
+    "playlists": "Playlists",
+    "favorites": "Favoritos",
+    "newPlaylist": "Nueva playlist",
+    "create": "Crear",
+    "trackCount": "{{count}} canciones",
+    "noPlaylists": "Aún no tienes playlists.",
+    "noFavorites": "Aún no tienes favoritos.",
+    "removeFavorite": "Quitar de favoritos",
+    "errors": {
+      "generic": "No pudimos cargar tu biblioteca.",
+      "playlistLimit": "Llegaste al máximo de playlists (20)."
+    }
+  },
+  "playlist": {
+    "name": "Nombre de la playlist",
+    "delete": "Borrar",
+    "confirmDelete": "¿Borrar esta playlist?",
+    "empty": "La playlist está vacía. Guarda canciones desde la cola.",
+    "removeTrack": "Quitar canción",
+    "errors": {
+      "notFound": "Esa playlist no existe."
+    }
+  },
+  "save": {
+    "title": "Guardar canción",
+    "favorite": "Favoritos",
+    "newPlaylist": "Nueva playlist",
+    "create": "Crear",
+    "close": "Cerrar",
+    "errors": {
+      "generic": "No pudimos guardar. Inténtalo de nuevo.",
+      "TRACK_NOT_FOUND": "Esa canción ya no está disponible.",
+      "PLAYLIST_LIMIT": "Llegaste al máximo de playlists (20)."
+    }
   }
 }

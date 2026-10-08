@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SavePanel } from '../components/SavePanel';
 import { Link } from 'react-router-dom';
 import { useQueue, type QueueItem } from '../realtime/useQueue';
 
@@ -41,6 +43,7 @@ function Row({ item, label }: { item: QueueItem; label: string }) {
 export function QueuePage() {
   const { t } = useTranslation();
   const { snapshot, connected } = useQueue();
+  const [saving, setSaving] = useState(false);
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-4 py-6">
@@ -67,13 +70,32 @@ export function QueuePage() {
               {t('queue.nowPlaying')}
             </h2>
             {snapshot.current ? (
-              <ul className="overflow-hidden rounded-2xl border border-[var(--color-accent)] bg-[var(--color-surface)]">
-                <Row item={snapshot.current} label="▶" />
-              </ul>
+              <>
+                <ul className="overflow-hidden rounded-2xl border border-[var(--color-accent)] bg-[var(--color-surface)]">
+                  <Row item={snapshot.current} label="▶" />
+                </ul>
+                <button
+                  type="button"
+                  onClick={() => setSaving(true)}
+                  className="min-h-12 rounded-xl border border-[var(--color-accent)] px-4 text-base font-semibold text-[var(--color-accent)]"
+                >
+                  {t('queue.save')}
+                </button>
+              </>
             ) : (
               <p className="text-sm text-[var(--color-muted)]">{t('queue.nothingPlaying')}</p>
             )}
           </section>
+
+          {saving && snapshot.current && (
+            <SavePanel
+              trackId={snapshot.current.track.id}
+
+              title={snapshot.current.track.title}
+
+              onClose={() => setSaving(false)}
+            />
+          )}
 
           <section className="flex flex-col gap-2">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">

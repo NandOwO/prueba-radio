@@ -1,7 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { HomePage } from './pages/HomePage';
+import { LibraryPage } from './pages/LibraryPage';
 import { LoginPage } from './pages/LoginPage';
+import { PlaylistPage } from './pages/PlaylistPage';
 import { DisplayPage } from './pages/DisplayPage';
 import { QueuePage } from './pages/QueuePage';
 import { RequestsPage } from './pages/RequestsPage';
@@ -61,6 +63,22 @@ export function App() {
             element={
               <Protected>
                 <DisplayPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/library"
+            element={
+              <Protected>
+                <LibraryPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/library/:id"
+            element={
+              <Protected>
+                <PlaylistPage />
               </Protected>
             }
           />
